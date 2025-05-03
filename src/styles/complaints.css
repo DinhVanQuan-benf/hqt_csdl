@@ -1,0 +1,128 @@
+.page {
+    width: 100%;
+    max-width: 1100px;
+    padding: 0 20px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: #f9fafb;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    font-size: 0.95rem;
+    color: #374151;
+    overflow-x: auto;
+}
+
+.table th,
+.table td {
+    padding: 12px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.table th {
+    background-color: #e0e7ff;
+    font-weight: 600;
+    color: #1e293b;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.table td {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.chat-container {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    max-height: 500px;
+    overflow-y: auto;
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+    font-size: 0.95rem;
+    color: #374151;
+}
+
+.chat-message {
+    margin-bottom: 12px;
+}
+
+.chat-message.own-message {
+    text-align: right;
+}
+
+.chat-message-content {
+    padding: 10px;
+    border-radius: 6px;
+    max-width: 70%;
+    display: inline-block;
+}
+
+.chat-message.own-message .chat-message-content {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+.chat-message-time {
+    font-size: 0.8rem;
+    color: #64748b;
+    text-align: right;
+}
+
+.chat-form {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+.chat-form input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+.chat-form button {
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.chat-form button:hover {
+    background-color: #2563eb;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 20px;
+    }
+
+    .page {
+        padding: 0 10px;
+    }
+
+    .chat-container,
+    .chat-form {
+        max-width: 100%;
+    }
+}

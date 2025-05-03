@@ -1,0 +1,143 @@
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    background-color: #1e293b;
+    padding: 20px 15px;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.3s ease;
+    overflow-x: hidden;
+    overflow-y: auto;
+    role: "navigation";
+}
+
+.navbar.collapsed {
+    transform: translateX(-260px);
+}
+
+.navbar-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-base);
+}
+
+.navbar-logo {
+    width: 40px;
+    height: 40px;
+    background-color: var(--secondary-color);
+    margin-right: 12px;
+    border-radius: 4px;
+}
+
+.navbar-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.navbar-menu {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.navbar-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: var(--font-size-base);
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+    cursor: pointer;
+}
+
+.navbar-item:hover,
+.navbar-item.active {
+    background-color: #334155;
+    color: #ffffff;
+}
+
+.navbar-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+    background-color: #64748b;
+    border-radius: 2px;
+}
+
+.navbar-label {
+    font-size: var(--font-size-base);
+}
+
+.navbar-user {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    color: #cbd5e1;
+    text-decoration: none;
+    border-top: 1px solid #334155;
+    margin-top: var(--spacing-base);
+}
+
+.navbar-avatar {
+    width: 32px;
+    height: 32px;
+    background-color: #64748b;
+    border-radius: 50%;
+    margin-right: 12px;
+}
+
+.navbar-user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar-user-name {
+    font-size: var(--font-size-base);
+    color: #ffffff;
+}
+
+.navbar-user-role {
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+.navbar-logout {
+    padding: 12px 15px;
+    background-color: #ef4444;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 12px;
+    font-size: var(--font-size-base);
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.navbar-logout:hover {
+    background-color: #dc2626;
+    transform: translateY(-2px);
+}
+
+.navbar-logout-label {
+    font-size: var(--font-size-base);
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        transform: translateX(-260px);
+    }
+
+    .navbar.open {
+        transform: translateX(0);
+    }
+}
