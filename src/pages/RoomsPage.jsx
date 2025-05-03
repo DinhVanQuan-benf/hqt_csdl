@@ -4,11 +4,10 @@ import { mockRoomsData } from '../data/mockData';
 import AuthModal from '../components/AuthModal';
 import '../styles/rooms.css';
 
-function RoomsPage({ role: initialRole }) {
+function RoomsPage({ role, setRole }) {
     const [rooms, setRooms] = useState(mockRoomsData);
     const [modal, setModal] = useState(null);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-    const [role, setRole] = useState(initialRole);
 
     useEffect(() => {
         // Đồng bộ role từ localStorage nếu có token
@@ -16,7 +15,7 @@ function RoomsPage({ role: initialRole }) {
         if (token && !role) {
             setRole('customer'); // Giả định role mặc định là 'customer'
         }
-    }, [role]);
+    });
 
     const handleAddRoom = (e) => {
         e.preventDefault();
@@ -57,8 +56,8 @@ function RoomsPage({ role: initialRole }) {
         setModal({ type: 'book', data: room });
     };
 
-    const handleAuthSuccess = (newRole) => {
-        setRole(newRole);
+    const handleAuthSuccess = () => {
+        setRole("customer");
         setIsAuthModalOpen(false);
         if (modal && modal.type === 'book') {
             setModal(modal); // Tiếp tục mở modal đặt phòng

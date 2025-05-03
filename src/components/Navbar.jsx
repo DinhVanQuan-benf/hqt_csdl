@@ -39,9 +39,9 @@ function Navbar({ role, setRole }) {
         window.location.href = '/';
     };
 
-    const handleLoginSuccess = (newRole) => {
+    const handleLoginSuccess = () => {
         setShowAuthModal(false);
-        setRole(newRole);
+        setRole("manager");
     };
 
     return (

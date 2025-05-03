@@ -1,17 +1,20 @@
 import { useState } from 'react';
 import '../styles/register.css';
+import { useNavigate } from 'react-router-dom';
 function AuthModal({ onLoginSuccess, onClose }) {
     const [activeTab, setActiveTab] = useState('login');
     const [loginCredentials, setLoginCredentials] = useState({ email: '', password: '', remember: false });
     const [registerCredentials, setRegisterCredentials] = useState({ email: '', password: '' });
-
+    const navigate = useNavigate();
     const handleLoginSubmit = (e) => {
         e.preventDefault();
         localStorage.setItem('token', 'demo-token');
         if (loginCredentials.remember) {
             localStorage.setItem('remember', 'true');
         }
-        onLoginSuccess('manager');
+        onLoginSuccess();
+        navigate('/');
+
     };
     const handleRegisterSubmit = (e) => {
         e.preventDefault();

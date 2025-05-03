@@ -60,7 +60,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage role={role || 'guest'} />} />
             <Route path="/announcements" element={<ProtectedRoute role={role}><AnnouncementsPage role={role} /></ProtectedRoute>} />
-            <Route path="/rooms" element={<RoomsPage role={role || 'guest'} />} />
+            <Route path="/rooms" element={<RoomsPage role={role || 'guest'} setRole={setRole} />} />
             <Route path="/services" element={<ProtectedRoute role={role}><ServicesPage role={role} /></ProtectedRoute>} />
             <Route path="/invoices" element={<ProtectedRoute role={role}><InvoicesPage role={role} /></ProtectedRoute>} />
             <Route path="/complaints" element={<ProtectedRoute role={role}><ComplaintsPage role={role} /></ProtectedRoute>} />
