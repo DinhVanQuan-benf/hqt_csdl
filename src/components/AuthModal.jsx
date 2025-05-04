@@ -14,7 +14,6 @@ function AuthModal({ onLoginSuccess, onClose }) {
         }
         onLoginSuccess();
         navigate('/');
-
     };
     const handleRegisterSubmit = (e) => {
         e.preventDefault();
