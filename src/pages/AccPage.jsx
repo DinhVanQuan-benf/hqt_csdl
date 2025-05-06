@@ -1,4 +1,4 @@
-import AccountForm from '../components/AccountForm';
+// import AccountForm from '../components/AccountForm';
 import '../styles/accounts.css';
 
 function AccPage() {

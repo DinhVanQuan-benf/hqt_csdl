@@ -25,14 +25,6 @@ const navItems = {
     { id: 'booking-history', label: 'Lịch sử đặt phòng', icon: 'history', path: '/booking-history' },
     { id: 'approve-rooms', label: 'Duyệt phòng', icon: 'approve', path: '/approve-rooms' },
   ],
-  customer: [
-    { id: 'announcements', label: 'Thông báo', icon: 'announcement', path: '/announcements' },
-    { id: 'rooms', label: 'Đặt phòng', icon: 'room', path: '/rooms' },
-    { id: 'services', label: 'Dịch vụ', icon: 'service', path: '/services' },
-    { id: 'invoices', label: 'Hóa đơn của tôi', icon: 'invoice', path: '/invoices' },
-    { id: 'complaints', label: 'Khiếu nại & Chat', icon: 'complaint', path: '/complaints' },
-    { id: 'booking-history', label: 'Lịch sử đặt phòng', icon: 'history', path: '/booking-history' },
-  ],
   guest: [
     { id: 'rooms', label: 'Xem phòng', icon: 'room', path: '/rooms' },
   ],

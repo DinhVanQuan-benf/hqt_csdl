@@ -5,6 +5,7 @@ function AuthModal({ onLoginSuccess, onClose }) {
     const [activeTab, setActiveTab] = useState('login');
     const [loginCredentials, setLoginCredentials] = useState({ email: '', password: '', remember: false });
     const [registerCredentials, setRegisterCredentials] = useState({ email: '', password: '' });
+
     const navigate = useNavigate();
     const handleLoginSubmit = (e) => {
         e.preventDefault();
@@ -16,7 +17,6 @@ function AuthModal({ onLoginSuccess, onClose }) {
         navigate('/');
     };
     const handleRegisterSubmit = (e) => {
-        e.preventDefault();
         alert('Đăng ký thành công! Vui lòng đăng nhập.');
         setActiveTab('login');
     };
