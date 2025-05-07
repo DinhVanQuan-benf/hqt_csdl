@@ -40,58 +40,113 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     z-index: 1000;
 }
 
-.modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 400px;
-    max-width: 95%;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-}
-
-.room-form {
+.room-modal {
+    background: #ffffff;
+    padding: 24px 28px;
+    border-radius: 16px;
+    width: 420px;
+    max-width: 90%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    animation: fadeIn 0.3s ease-in-out;
     display: flex;
     flex-direction: column;
 }
 
-.room-form label {
-    margin: 10px 0 5px;
-    font-weight: bold;
+.room-modal h3 {
+    margin: 0 0 16px 0;
+    font-size: 22px;
+    font-weight: 600;
+    text-align: center;
+    color: #333;
 }
 
-.room-form input {
-    padding: 8px;
+.room-modal form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.room-modal .form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.room-modal label {
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #444;
+}
+
+.room-modal input,
+.room-modal select {
+    padding: 10px 12px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    background-color: #fff;
 }
 
-.modal-actions {
+.room-modal input:focus,
+.room-modal select:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+.modal-buttons {
     display: flex;
     justify-content: space-between;
-    margin-top: 20px;
+    gap: 12px;
+    margin-top: 8px;
 }
 
-.modal-actions button {
-    padding: 8px 12px;
+.modal-buttons button {
+    flex: 1;
+    padding: 10px;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
     cursor: pointer;
+    transition: background-color 0.2s;
 }
 
-.modal-actions button:first-child {
+.modal-buttons button:first-child {
     background-color: #4CAF50;
     color: white;
 }
 
-.modal-actions button:last-child {
-    background-color: #ccc;
+.modal-buttons button:first-child:hover {
+    background-color: #45a049;
+}
+
+.modal-buttons button:last-child {
+    background-color: #f44336;
+    color: white;
+}
+
+.modal-buttons button:last-child:hover {
+    background-color: #d32f2f;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

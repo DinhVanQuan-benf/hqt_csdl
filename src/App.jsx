@@ -29,7 +29,6 @@ const navItems = {
     { id: 'rooms', label: 'Xem phòng', icon: 'room', path: '/rooms' },
   ],
 };
-
 function App() {
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);

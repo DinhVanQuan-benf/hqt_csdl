@@ -103,5 +103,4 @@ function AuthModal({ onLoginSuccess, onClose }) {
         </div>
     );
 }
-
 export default AuthModal;

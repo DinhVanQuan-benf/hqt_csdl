@@ -1,67 +1,184 @@
-/* UserModal.css */
+/* UserManagement.css */
+
+.user-container {
+    padding: 2rem;
+    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
+}
+
+.user-container h2 {
+    margin-bottom: 1rem;
+}
+
+.user-container .filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.user-container input,
+.user-container select {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.user-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    background: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.user-container th,
+.user-container td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.user-container button {
+    padding: 6px 12px;
+    margin: 0 4px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.user-container button:hover {
+    background-color: #eee;
+}
+
+.add-button {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    padding: 10px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.add-button:hover {
+    background-color: #45a049;
+}
 
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
     display: flex;
-    justify-content: center;
     align-items: center;
-    z-index: 999;
+    justify-content: center;
+    z-index: 1000;
 }
 
-.modal {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 400px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-}
-
-.modal h3 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    text-align: center;
-}
-
-.modal form {
+.user-modal {
+    background: #ffffff;
+    padding: 24px 28px;
+    border-radius: 16px;
+    width: 420px;
+    max-width: 90%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    animation: fadeIn 0.3s ease-in-out;
     display: flex;
     flex-direction: column;
 }
 
-.modal input,
-.modal select {
-    margin-bottom: 10px;
-    padding: 8px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+.user-modal h3 {
+    margin: 0 0 16px 0;
+    font-size: 22px;
+    font-weight: 600;
+    text-align: center;
+    color: #333;
 }
 
-.modal-actions {
+.user-modal form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.user-modal .form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-modal label {
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #444;
+}
+
+.user-modal input,
+.user-modal select {
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    background-color: #fff;
+}
+
+.user-modal input:focus,
+.user-modal select:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+.modal-buttons {
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
+    gap: 12px;
+    margin-top: 8px;
 }
 
-.modal-actions button {
-    padding: 8px 12px;
+.modal-buttons button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
     font-size: 14px;
     cursor: pointer;
-    border: none;
-    border-radius: 4px;
-    background-color: #4caf50;
+    transition: background-color 0.2s;
+}
+
+.modal-buttons button:first-child {
+    background-color: #4CAF50;
     color: white;
-    transition: background-color 0.3s;
 }
 
-.modal-actions button[type="button"] {
+.modal-buttons button:first-child:hover {
+    background-color: #45a049;
+}
+
+.modal-buttons button:last-child {
     background-color: #f44336;
+    color: white;
 }
 
-.modal-actions button:hover {
-    opacity: 0.9;
+.modal-buttons button:last-child:hover {
+    background-color: #d32f2f;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

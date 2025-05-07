@@ -15,14 +15,6 @@ const navItems = {
         { id: 'contracts', label: 'Hợp đồng', icon: 'contract', path: '/contracts' },
         { id: 'accounts', label: 'Quản lí tài khoản', icon: 'account', path: '/accounts' },
     ],
-    customer: [
-        { id: 'announcements', label: 'Thông báo', icon: 'announcement', path: '/announcements' },
-        { id: 'rooms', label: 'Đặt phòng', icon: 'room', path: '/rooms' },
-        { id: 'services', label: 'Dịch vụ', icon: 'service', path: '/services' },
-        { id: 'invoices', label: 'Hóa đơn của tôi', icon: 'invoice', path: '/invoices' },
-        { id: 'complaints', label: 'Khiếu nại & Chat', icon: 'complaint', path: '/complaints' },
-        { id: 'contracts', label: 'Hợp đồng', icon: 'contract', path: '/contracts' },
-    ],
     guest: [
         { id: 'rooms', label: 'Xem phòng', icon: 'room', path: '/rooms' }
     ],

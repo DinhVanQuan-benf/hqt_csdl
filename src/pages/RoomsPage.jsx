@@ -15,7 +15,7 @@ function RoomManagement() {
 
     const fetchRooms = async () => {
         try {
-            const response = await axios.get("/room/all");
+            const response = await axios.get("/api/room/all");
             setRooms(response.data);
         } catch (error) {
             console.error("Lỗi khi tải phòng:", error);
@@ -25,7 +25,7 @@ function RoomManagement() {
     const handleDelete = async (id) => {
         if (!window.confirm("Bạn có chắc muốn xoá phòng này?")) return;
         try {
-            await axios.delete(`/room/remove/${id}`);
+            await axios.delete(`/api/room/remove/${id}`);
             setRooms(rooms.filter((room) => room.id !== id));
         } catch (error) {
             console.error("Lỗi khi xoá phòng:", error);
