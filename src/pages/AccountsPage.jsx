@@ -11,7 +11,6 @@ function UserManagement() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [rooms, setRooms] = useState([]);
     const [searchName, setSearchName] = useState("");
-    const [filterRoom, setFilterRoom] = useState("");
 
     useEffect(() => {
         fetchUsers();
@@ -20,7 +19,7 @@ function UserManagement() {
 
     useEffect(() => {
         filterUsers();
-    }, [searchName, filterRoom, users]);
+    }, [searchName, users]);
 
     const fetchUsers = async () => {
         try {
@@ -46,9 +45,6 @@ function UserManagement() {
             filtered = filtered.filter((user) =>
                 user.username.toLowerCase().includes(searchName.toLowerCase())
             );
-        }
-        if (filterRoom) {
-            filtered = filtered.filter((user) => user.room?.id == filterRoom);
         }
         setFilteredUsers(filtered);
     };
@@ -85,15 +81,6 @@ function UserManagement() {
                     onChange={(e) => setSearchName(e.target.value)}
                 />
 
-                <select
-                    value={filterRoom}
-                    onChange={(e) => setFilterRoom(e.target.value)}
-                >
-                    <option value="">-- Lọc theo phòng --</option>
-                    {rooms.map((room) => (
-                        <option key={room.id} value={room.id}>{room.name}</option>
-                    ))}
-                </select>
             </div>
 
             <table>

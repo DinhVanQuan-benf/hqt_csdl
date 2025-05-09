@@ -1,39 +1,73 @@
-/* RoomManagement.css */
-
 .room-container {
     padding: 20px;
-    position: relative;
-    font-family: Arial, sans-serif;
+    max-width: 1200px;
+    margin: auto;
 }
 
-.room-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+.room-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
-.room-table th,
-.room-table td {
-    border: 1px solid #ccc;
-    padding: 8px;
-    text-align: center;
+.room-card {
+    background: #f9fafb;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 20px;
+    width: 270px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: 0.2s;
+}
+
+.room-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.room-card h3 {
+    margin-top: 0;
+    color: #111827;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.actions button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.actions button:first-child {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.actions .delete-btn {
+    background-color: #ef4444;
+    color: white;
+}
+
+.clickable-status {
+    color: #2563eb;
+    cursor: pointer;
+    text-decoration: underline;
 }
 
 .add-room-button {
-    position: fixed;
-    bottom: 70px;
-    right: 70px;
-    width: 70px;
-    height: 70px;
-    background-color: var(--primary-color);
-    color: #ffffff;
+    margin-top: 20px;
+    padding: 12px 20px;
+    background-color: #10b981;
+    color: white;
+    font-size: 18px;
     border: none;
-    border-radius: 10%;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s, transform 0.2s;
-    z-index: 1000;
 }
 
 .modal-overlay {
@@ -62,7 +96,7 @@
 }
 
 .room-modal h3 {
-    margin: 0 0 16px 0;
+    margin-bottom: 16px;
     font-size: 22px;
     font-weight: 600;
     text-align: center;
@@ -72,29 +106,17 @@
 .room-modal form {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-}
-
-.room-modal .form-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.room-modal label {
-    margin-bottom: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #444;
+    gap: 14px;
 }
 
 .room-modal input,
 .room-modal select {
     padding: 10px 12px;
-    border: 1px solid #ccc;
     border-radius: 8px;
+    border: 1px solid #ccc;
     font-size: 14px;
-    transition: border-color 0.2s;
     background-color: #fff;
+    transition: border-color 0.2s;
 }
 
 .room-modal input:focus,
@@ -103,14 +125,14 @@
     border-color: #4CAF50;
 }
 
-.modal-buttons {
+.room-modal-buttons {
     display: flex;
     justify-content: space-between;
     gap: 12px;
     margin-top: 8px;
 }
 
-.modal-buttons button {
+.room-modal-buttons button {
     flex: 1;
     padding: 10px;
     border: none;
@@ -121,21 +143,21 @@
     transition: background-color 0.2s;
 }
 
-.modal-buttons button:first-child {
+.room-modal-buttons button:first-child {
     background-color: #4CAF50;
     color: white;
 }
 
-.modal-buttons button:first-child:hover {
+.room-modal-buttons button:first-child:hover {
     background-color: #45a049;
 }
 
-.modal-buttons button:last-child {
+.room-modal-buttons button:last-child {
     background-color: #f44336;
     color: white;
 }
 
-.modal-buttons button:last-child:hover {
+.room-modal-buttons button:last-child:hover {
     background-color: #d32f2f;
 }
 

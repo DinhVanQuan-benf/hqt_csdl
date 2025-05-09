@@ -151,3 +151,19 @@
         right: 15px;
     }
 }
+
+.pagination {
+    margin-top: 16px;
+}
+
+.pagination button {
+    margin: 0 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+.pagination button.active {
+    background-color: #1abc9c;
+    color: white;
+    font-weight: bold;
+}

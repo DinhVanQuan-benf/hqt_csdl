@@ -1,0 +1,73 @@
+.contract-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.contract-modal-content {
+    background: white;
+    padding: 20px;
+    width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 8px;
+}
+
+.contract-modal-content h2 {
+    margin-bottom: 10px;
+}
+
+.contract-modal-content input {
+    margin-bottom: 10px;
+    padding: 6px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.contract-modal-content label {
+    font-weight: bold;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.contract-modal button {
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+.resident-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.resident-table th,
+.resident-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+.resident-table th {
+    background-color: #f0f0f0;
+}
+
+.resident-form {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #fafafa;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}

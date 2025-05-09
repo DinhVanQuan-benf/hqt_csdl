@@ -2,12 +2,14 @@
 
 .stats-page {
     padding: 20px;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .stats-page h2 {
     margin-bottom: 20px;
     color: #2c3e50;
+    font-size: 1.5rem;
+    font-weight: bold;
 }
 
 .stats-container {
@@ -20,27 +22,36 @@
 .stat-card {
     background-color: #ecf0f1;
     border-radius: 12px;
-    padding: 20px;
-    flex: 1 1 200px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    padding: 16px;
+    flex: 1 1 220px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    color: #2c3e50;
 }
 
 .stat-card h3 {
-    margin-bottom: 10px;
+    margin: 0 0 4px;
     color: #34495e;
+    font-size: 1rem;
 }
 
 .stat-card p {
-    font-size: 20px;
+    font-size: 1.2rem;
     font-weight: bold;
     color: #1abc9c;
+    margin: 0;
 }
 
 .charts-container {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 
 .chart {
@@ -50,23 +61,14 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-/* Biểu đồ dân cư: 1 hàng riêng */
-.chart:first-child {
-    width: 100%;
+.chart h3 {
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    color: #34495e;
+    font-weight: 600;
 }
 
-/* Biểu đồ Pie và Bar: chung hàng */
-.charts-row {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-/* Nếu có 2 biểu đồ trong hàng, cái đầu chiếm 30%, cái sau chiếm phần còn lại */
-.charts-row .chart:first-child {
-    flex: 0 0 30%;
-}
-
-.charts-row .chart:nth-child(2) {
-    flex: 1;
+canvas {
+    max-height: 300px !important;
+    width: 100% !important;
 }

@@ -5,18 +5,19 @@ import '../styles/navbar.css';
 
 // Navigation items based on role
 const navItems = {
-    manager: [
-        { id: 'announcements', label: 'Thông báo', icon: 'announcement', path: '/announcements' },
-        { id: 'rooms', label: 'Phòng', icon: 'room', path: '/rooms' },
+    admin: [
+        { id: 'accounts', label: 'Quản lý tài khoản', icon: 'account', path: '/accounts' },
+        { id: 'stats', label: 'Thống kê', icon: 'stats', path: '/stats' },
+    ],
+    admin_service: [
         { id: 'services', label: 'Dịch vụ', icon: 'service', path: '/services' },
         { id: 'invoices', label: 'Hóa đơn', icon: 'invoice', path: '/invoices' },
-        { id: 'complaints', label: 'Khiếu nại & Chat', icon: 'complaint', path: '/complaints' },
-        { id: 'stats', label: 'Thống kê', icon: 'stats', path: '/stats' },
-        { id: 'contracts', label: 'Hợp đồng', icon: 'contract', path: '/contracts' },
-        { id: 'accounts', label: 'Quản lí tài khoản', icon: 'account', path: '/accounts' },
+    ],
+    admin_room: [
+        { id: 'rooms', label: 'Phòng', icon: 'room', path: '/rooms' },
     ],
     guest: [
-        { id: 'rooms', label: 'Xem phòng', icon: 'room', path: '/rooms' }
+        { id: 'rooms', label: 'Xem phòng', icon: 'room', path: '/rooms' },
     ],
 };
 
@@ -24,28 +25,26 @@ function Navbar({ role, setRole }) {
     const [showAuthModal, setShowAuthModal] = useState(false);
     const location = useLocation();
 
-
     const handleLogout = () => {
         localStorage.removeItem('token');
-        setRole(null);
+        setRole('guest');
         window.location.href = '/';
     };
 
-    const handleLoginSuccess = () => {
+    const handleLoginSuccess = (newRole) => {
         setShowAuthModal(false);
-        setRole("manager");
+        setRole(newRole);
     };
 
     return (
         <>
             <nav className="navbar">
                 <div className="navbar-header">
-
                     <div className="navbar-logo"></div>
                     <Link to="/" className="navbar-title">Quản Lý Tòa Nhà</Link>
                 </div>
                 <div className="navbar-menu">
-                    {navItems[role].map((item) => (
+                    {navItems[role]?.map((item) => (
                         <Link
                             key={item.id}
                             to={item.path}
@@ -57,11 +56,13 @@ function Navbar({ role, setRole }) {
                     ))}
                 </div>
                 {role !== 'guest' && (
-                    <Link to="/account" className="navbar-user">
+                    <Link to="/acc" className="navbar-user">
                         <div className="navbar-avatar"></div>
                         <div className="navbar-user-info">
                             <span className="navbar-user-name">John Doe</span>
-                            <span className="navbar-user-role">{role === 'manager' ? 'Quản lý' : 'Khách hàng'}</span>
+                            <span className="navbar-user-role">
+                                {role === 'admin' ? 'Quản lý' : role === 'admin_service' ? 'Quản lý dịch vụ' : 'Quản lý phòng'}
+                            </span>
                         </div>
                     </Link>
                 )}

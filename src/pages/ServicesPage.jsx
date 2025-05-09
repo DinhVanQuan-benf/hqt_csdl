@@ -1,117 +1,203 @@
-import { useState } from 'react';
-import ServiceForm from '../components/ServiceForm';
-import { mockServicesData } from '../data/mockData';
+
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import '../styles/services.css';
 
-function ServicesPage({ role }) {
-    const [services, setServices] = useState(mockServicesData);
+function ServicesPage() {
+    const [services, setServices] = useState([]);
     const [modal, setModal] = useState(null);
+    const [rooms, setRooms] = useState([]);
+    const [selectedRoomId, setSelectedRoomId] = useState('');
+    const [residentsInRoom, setResidentsInRoom] = useState([]);
+    const [selectedResidentId, setSelectedResidentId] = useState('');
 
-    const handleAddService = (e) => {
+    useEffect(() => {
+        const fetchServices = async () => {
+            try {
+                const res = await axios.get('/api/service/all');
+                const data = Array.isArray(res.data[0]) ? res.data[0] : res.data;
+                setServices(data);
+            } catch (err) {
+                console.error('Lỗi khi lấy dịch vụ:', err);
+            }
+        };
+
+        const fetchRooms = async () => {
+            try {
+                const res = await axios.get('/api/room/all');
+                setRooms(res.data);
+            } catch (err) {
+                console.error('Lỗi khi lấy phòng:', err);
+            }
+        };
+
+        fetchServices();
+        fetchRooms();
+    }, []);
+
+    useEffect(() => {
+        if (!selectedRoomId) return;
+        const room = rooms.find(r => r.id === Number(selectedRoomId));
+        if (room) {
+            const residents = room.rentalTimes.map(rt => rt.resident);
+            setResidentsInRoom(residents);
+            setSelectedResidentId(residents.length > 0 ? residents[0].id : '');
+        }
+    }, [selectedRoomId, rooms]);
+
+    const handleAddService = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const newService = {
-            id: Date.now(),
             name: formData.get('name'),
             price: Number(formData.get('price')),
-            status: 'Có sẵn'
+            description: formData.get('description')
         };
-        setServices([...services, newService]);
-        // TODO: Gửi dữ liệu đến backend
-        // Ví dụ API: fetch('/api/services', { method: 'POST', body: JSON.stringify(newService) });
-        setModal(null);
+        try {
+            await axios.post('/api/service/add', newService);
+            setServices(prev => [...prev, { id: Date.now(), ...newService }]);
+            setModal(null);
+        } catch (err) {
+            console.error('Lỗi thêm dịch vụ:', err);
+        }
     };
 
-    const handleEditService = (e, id) => {
+    const handleEditService = async (e, id) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const updatedService = {
-            id,
             name: formData.get('name'),
-            price: Number(formData.get('price'))
+            price: Number(formData.get('price')),
+            description: formData.get('description')
         };
-        setServices(services.map((service) => (service.id === id ? updatedService : service)));
-        // TODO: Cập nhật dữ liệu trên backend
-        // Ví dụ API: fetch(`/api/services/${id}`, { method: 'PUT', body: JSON.stringify(updatedService) });
-        setModal(null);
+        try {
+            await axios.put(`/api/service/update/${id}`, updatedService);
+            setServices(prev =>
+                prev.map(service => (service.id === id ? { id, ...updatedService } : service))
+            );
+            setModal(null);
+        } catch (err) {
+            console.error('Lỗi cập nhật dịch vụ:', err);
+        }
     };
 
-    const handleDeleteService = (id) => {
-        setServices(services.filter((service) => service.id !== id));
-        // TODO: Xóa dữ liệu trên backend
-        // Ví dụ API: fetch(`/api/services/${id}`, { method: 'DELETE' });
+    const handleDeleteService = async (id) => {
+        try {
+            await axios.delete(`/api/service/remove/${id}`);
+            setServices(prev => prev.filter(service => service.id !== id));
+        } catch (err) {
+            console.error('Lỗi xóa dịch vụ:', err);
+        }
     };
 
-    const handleBookService = (e, id) => {
+    const handleBookService = async (e, idService) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const booking = {
-            serviceId: id,
             duration: Number(formData.get('duration')),
-            status: 'Chờ duyệt'
         };
-        // TODO: Gửi yêu cầu đặt dịch vụ đến backend
-        // Ví dụ API: fetch('/api/service-bookings', { method: 'POST', body: JSON.stringify(booking) });
-        alert('Yêu cầu đặt dịch vụ đã được gửi!');
+        try {
+            await axios.post(
+                `/api/usedservice/add/${selectedResidentId}/${idService}`,
+                booking
+            );
+            alert('Yêu cầu đặt dịch vụ đã được gửi!');
+        } catch (err) {
+            console.error('Lỗi đặt dịch vụ:', err);
+        }
         setModal(null);
     };
 
+    const ServiceForm = ({ type, data = {}, onSubmit, onCancel }) => (
+        <div className="modal-overlay">
+            <div className="modal">
+                <form className="service-form" onSubmit={onSubmit}>
+                    <h3>{type === 'edit' ? 'Sửa Dịch Vụ' : type === 'book' ? 'Đặt Dịch Vụ' : 'Thêm Dịch Vụ'}</h3>
+                    <div className="form-group">
+                        <label htmlFor="name">Tên dịch vụ</label>
+                        <input type="text" name="name" defaultValue={data.name || ''} required disabled={type === 'book'} />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="price">Giá (VND)</label>
+                        <input type="number" name="price" defaultValue={data.price || ''} required disabled={type === 'book'} />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="description">Mô tả</label>
+                        <textarea name="description" rows={3} defaultValue={data.description || ''} disabled={type === 'book'}></textarea>
+                    </div>
+                    {type === 'book' && (
+                        <>
+                            <div className="form-group">
+                                <label htmlFor="room">Chọn phòng</label>
+                                <select value={selectedRoomId} onChange={e => setSelectedRoomId(e.target.value)} required>
+                                    <option value="">-- Chọn phòng --</option>
+                                    {rooms.map(room => (
+                                        <option key={room.id} value={room.id}>{room.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            {residentsInRoom.length > 0 && (
+                                <div className="form-group">
+                                    <label htmlFor="resident">Chọn cư dân</label>
+                                    <select value={selectedResidentId} onChange={e => setSelectedResidentId(e.target.value)} required>
+                                        {residentsInRoom.map(r => (
+                                            <option key={r.id} value={r.id}>{r.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            )}
+                            <div className="form-group">
+                                <label htmlFor="duration">Thời lượng</label>
+                                <input type="number" name="duration" min="1" required />
+                            </div>
+                        </>
+                    )}
+                    <div className="form-actions">
+                        <button type="submit">
+                            {type === 'edit' ? 'Cập nhật' : type === 'book' ? 'Gửi yêu cầu' : 'Thêm'}
+                        </button>
+                        <button type="button" onClick={onCancel}>Hủy</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+
     return (
         <div className="page services-page">
-            <h2>{role === 'manager' ? 'Quản Lý Dịch Vụ' : 'Dịch Vụ'}</h2>
-            {role === 'manager' && (
-                <button
-                    className="add-button"
-                    onClick={() => setModal({ type: 'add' })}
-                >
-                    +
-                </button>
-            )}
-            <div className="card-container">
+            <h2>Dịch Vụ</h2>
+            <button className="add-button" onClick={() => setModal({ type: 'add' })}>+</button>
+
+            <div className="service-container">
                 {services.map((service) => (
-                    <div key={service.id} className="card">
+                    <div key={service.id} className="service-card">
                         <h3>{service.name}</h3>
                         <p><strong>Giá:</strong> {service.price.toLocaleString()} VND</p>
-                        <p><strong>Trạng thái:</strong> {service.status}</p>
-                        <div className="card-actions">
-                            {role === 'manager' ? (
-                                <>
-                                    <button
-                                        className="edit-button"
-                                        onClick={() => setModal({ type: 'edit', data: service })}
-                                    >
-                                        Sửa
-                                    </button>
-                                    <button
-                                        className="delete-button"
-                                        onClick={() => handleDeleteService(service.id)}
-                                    >
-                                        Xóa
-                                    </button>
-                                </>
-                            ) : (
-                                <button
-                                    className="book-button"
-                                    onClick={() => setModal({ type: 'book', data: service })}
-                                    disabled={service.status !== 'Có sẵn'}
-                                >
-                                    Đặt Dịch Vụ
-                                </button>
-                            )}
+                        <p><strong>Mô tả:</strong> {service.description}</p>
+                        <div className="service-actions">
+                            <button className="edit-button" onClick={() => setModal({ type: 'edit', data: service })}>Sửa</button>
+                            <button className="delete-button" onClick={() => handleDeleteService(service.id)}>Xóa</button>
+                            <button className="book-button" onClick={() => setModal({ type: 'book', data: service })}>
+                                Đặt Dịch Vụ
+                            </button>
                         </div>
                     </div>
                 ))}
             </div>
+
             {modal && (
                 <ServiceForm
                     type={modal.type}
                     data={modal.data}
-                    onSubmit={modal.type === 'add' ? handleAddService : modal.type === 'edit' ? handleEditService : handleBookService}
+                    onSubmit={
+                        modal.type === 'add' ? handleAddService :
+                            modal.type === 'edit' ? (e) => handleEditService(e, modal.data.id) :
+                                (e) => handleBookService(e, modal.data.id)
+                    }
                     onCancel={() => setModal(null)}
                 />
             )}
         </div>
     );
 }
-
 export default ServicesPage;

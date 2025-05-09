@@ -1,25 +1,53 @@
 import { useState } from 'react';
 import '../styles/register.css';
 import { useNavigate } from 'react-router-dom';
+import instance from '../axiosConfig'; // Sử dụng axios instance đã cấu hình
+
 function AuthModal({ onLoginSuccess, onClose }) {
     const [activeTab, setActiveTab] = useState('login');
     const [loginCredentials, setLoginCredentials] = useState({ email: '', password: '', remember: false });
     const [registerCredentials, setRegisterCredentials] = useState({ email: '', password: '' });
+    const [error, setError] = useState('');
 
     const navigate = useNavigate();
-    const handleLoginSubmit = (e) => {
+
+    const handleLoginSubmit = async (e) => {
         e.preventDefault();
-        localStorage.setItem('token', 'demo-token');
-        if (loginCredentials.remember) {
-            localStorage.setItem('remember', 'true');
+        try {
+            const response = await instance.post('/user/login', {
+                email: loginCredentials.email,
+                password: loginCredentials.password,
+            });
+            const token = response.data.token; // Giả định backend trả về token trong response
+            localStorage.setItem('token', token);
+            if (loginCredentials.remember) {
+                localStorage.setItem('remember', 'true');
+            }
+            const decoded = jwtDecode(token);
+            const userRole = decoded.roles[0].replace('ROLE_', '').toLowerCase();
+            onLoginSuccess(userRole);
+            navigate('/');
+        } catch (err) {
+            setError('Đăng nhập thất bại. Vui lòng kiểm tra email hoặc mật khẩu.');
+            console.error('Lỗi đăng nhập:', err);
         }
-        onLoginSuccess();
-        navigate('/');
     };
-    const handleRegisterSubmit = (e) => {
-        alert('Đăng ký thành công! Vui lòng đăng nhập.');
-        setActiveTab('login');
+
+    const handleRegisterSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await instance.post('/user/signup', {
+                email: registerCredentials.email,
+                password: registerCredentials.password,
+            });
+            alert('Đăng ký thành công! Vui lòng đăng nhập.');
+            setActiveTab('login');
+        } catch (err) {
+            setError('Đăng ký thất bại. Vui lòng thử lại.');
+            console.error('Lỗi đăng ký:', err);
+        }
     };
+
     return (
         <div className="modal">
             <div className="modal-content">
@@ -37,6 +65,7 @@ function AuthModal({ onLoginSuccess, onClose }) {
                         Tạo tài khoản
                     </button>
                 </div>
+                {error && <p className="error">{error}</p>}
                 {activeTab === 'login' ? (
                     <form onSubmit={handleLoginSubmit} className="login-form">
                         <label>
@@ -103,4 +132,5 @@ function AuthModal({ onLoginSuccess, onClose }) {
         </div>
     );
 }
+
 export default AuthModal;

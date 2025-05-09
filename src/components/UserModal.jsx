@@ -33,9 +33,9 @@ function UserModal({ user, onClose, rooms }) {
         e.preventDefault();
         try {
             if (user) {
-                await axios.put(`http://localhost:8080/api/users/${user.id}`, formData);
+                await axios.put(`/api/user/update/${user.id}`, formData);
             } else {
-                await axios.post("http://localhost:8080/api/users", formData);
+                await axios.post("/api/user/add", formData);
             }
             onClose();
         } catch (err) {

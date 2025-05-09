@@ -7,13 +7,18 @@ function RoomModal({ room, onClose }) {
         name: "",
         type: "",
         area: "",
-        rentPrice: "",
-        rentStatus: ""
+        rentPrice: ""
     });
 
     useEffect(() => {
         if (room) {
-            setFormData(room);
+            // Nếu sửa phòng thì lấy dữ liệu hiện có
+            setFormData({
+                name: room.name,
+                type: room.type,
+                area: room.area,
+                rentPrice: room.rentPrice
+            });
         }
     }, [room]);
 
@@ -26,9 +31,17 @@ function RoomModal({ room, onClose }) {
         e.preventDefault();
         try {
             if (room) {
-                await axios.put(`/api/room/edit/${room.id}`, formData);
+                // Sửa phòng
+                await axios.put(`/api/room/edit/${room.id}`, {
+                    ...formData,
+                    rentStatus: room.rentStatus // Giữ nguyên trạng thái khi sửa
+                });
             } else {
-                await axios.post("/api/room/add", formData);
+                // Thêm phòng mới với trạng thái mặc định là "available"
+                await axios.post("/api/room/add", {
+                    ...formData,
+                    rentStatus: "available"
+                });
             }
             onClose();
         } catch (error) {
@@ -69,13 +82,6 @@ function RoomModal({ room, onClose }) {
                         value={formData.rentPrice}
                         onChange={handleChange}
                         placeholder="Giá thuê"
-                        required
-                    />
-                    <input
-                        name="rentStatus"
-                        value={formData.rentStatus}
-                        onChange={handleChange}
-                        placeholder="Trạng thái"
                         required
                     />
 
