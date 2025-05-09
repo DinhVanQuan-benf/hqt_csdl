@@ -39,12 +39,16 @@
 }
 
 .card-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    display: flex;
+    /* Dùng flexbox */
+    flex-wrap: wrap;
+    /* Cho phép các card xuống dòng khi hết không gian */
     gap: 30px;
+    /* Khoảng cách giữa các card */
     width: 100%;
     padding: 0;
-    justify-content: center;
+    justify-content: flex-start;
+    /* Các card sẽ căn trái */
 }
 
 .card {
@@ -54,7 +58,10 @@
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 1px solid #e0e7ff;
+    width: 240px;
+    /* Kích thước của mỗi card */
 }
+
 
 .card:hover {
     transform: translateY(-5px);

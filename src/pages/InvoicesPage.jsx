@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../utils/axiosConfig';
 import '../styles/invoices.css';
 
 function InvoicePage() {
@@ -12,7 +12,7 @@ function InvoicePage() {
     useEffect(() => {
         const fetchInvoices = async () => {
             try {
-                const response = await axios.get('/api/usedservice/all');
+                const response = await axios.get('/usedservice/all');
                 setInvoices(response.data);
             } catch (error) {
                 console.error('Error fetching invoices:', error);

@@ -1,34 +1,55 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import "../styles/acc.css";
+import React, { useState, useEffect } from 'react';
+import axios from '../utils/axiosConfig';
+import '../styles/acc.css';
+import { getToken } from '../utils/auth';
+import { jwtDecode } from 'jwt-decode';
 
-function AccountManagement(id) {
+function AccountManagement() {
     const [userInfo, setUserInfo] = useState({
-        name: "",
-        email: "",
-        phone: "",
-        address: ""
+        name: '',
+        email: '',
+        phone: '',
+        address: ''
     });
     const [passwordData, setPasswordData] = useState({
-        oldPassword: "",
-        newPassword: "",
-        confirmPassword: ""
+        oldPassword: '',
+        newPassword: '',
+        confirmPassword: ''
     });
     const [isEditing, setIsEditing] = useState(false);
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState('');
 
-    // Lấy thông tin người dùng khi component mount
+    // Lấy user ID từ token
+    const getUserId = () => {
+        const token = getToken();
+        if (token) {
+            try {
+                const decoded = jwtDecode(token);
+                return decoded.sub; // Giả sử 'sub' chứa username, cần endpoint để lấy ID
+            } catch (error) {
+                console.error('Invalid token:', error);
+                return null;
+            }
+        }
+        return null;
+    };
+
     useEffect(() => {
         fetchUserInfo();
-    });
+    }, []);
 
     const fetchUserInfo = async () => {
+        const username = getUserId();
+        if (!username) {
+            setMessage('Vui lòng đăng nhập để xem thông tin.');
+            return;
+        }
         try {
-            const response = await axios.get(`/api/user/${id}`);
+            const response = await axios.get(`/user/${username}`);
             setUserInfo(response.data);
         } catch (error) {
-            console.error("Lỗi khi lấy thông tin người dùng:", error);
-            setMessage("Không thể tải thông tin người dùng.");
+            console.error('Lỗi khi lấy thông tin người dùng:', error);
+            setMessage('Không thể tải thông tin người dùng.');
         }
     };
 
@@ -44,32 +65,42 @@ function AccountManagement(id) {
 
     const handleUpdateUserInfo = async (e) => {
         e.preventDefault();
+        const username = getUserId();
+        if (!username) {
+            setMessage('Vui lòng đăng nhập để cập nhật.');
+            return;
+        }
         try {
-            await axios.put(`/api/user/update/${id}`, userInfo);
-            setMessage("Cập nhật thông tin thành công!");
+            await axios.put(`/user/update/${username}`, userInfo);
+            setMessage('Cập nhật thông tin thành công!');
             setIsEditing(false);
         } catch (error) {
-            console.error("Lỗi khi cập nhật thông tin:", error);
-            setMessage("Cập nhật thông tin thất bại.");
+            console.error('Lỗi khi cập nhật thông tin:', error);
+            setMessage('Cập nhật thông tin thất bại.');
         }
     };
 
     const handleChangePassword = async (e) => {
         e.preventDefault();
+        const username = getUserId();
+        if (!username) {
+            setMessage('Vui lòng đăng nhập để đổi mật khẩu.');
+            return;
+        }
         if (passwordData.newPassword !== passwordData.confirmPassword) {
-            setMessage("Mật khẩu mới và xác nhận mật khẩu không khớp.");
+            setMessage('Mật khẩu mới và xác nhận mật khẩu không khớp.');
             return;
         }
         try {
-            await axios.put(`/api/user/update/${id}`, {
+            await axios.put(`/user/update/${username}`, {
                 ...userInfo,
                 password: passwordData.newPassword
             });
-            setMessage("Đổi mật khẩu thành công!");
-            setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" });
+            setMessage('Đổi mật khẩu thành công!');
+            setPasswordData({ oldPassword: '', newPassword: '', confirmPassword: '' });
         } catch (error) {
-            console.error("Lỗi khi đổi mật khẩu:", error);
-            setMessage("Đổi mật khẩu thất bại. Vui lòng kiểm tra mật khẩu cũ.");
+            console.error('Lỗi khi đổi mật khẩu:', error);
+            setMessage('Đổi mật khẩu thất bại. Vui lòng kiểm tra mật khẩu cũ.');
         }
     };
 
@@ -77,7 +108,6 @@ function AccountManagement(id) {
         <div className="account-container">
             <h2>Quản Lý Tài Khoản Cá Nhân</h2>
 
-            {/* Form Thông Tin Cá Nhân */}
             <div className="account-section">
                 <h3>Thông Tin Cá Nhân</h3>
                 {message && <p className="message">{message}</p>}
@@ -135,7 +165,6 @@ function AccountManagement(id) {
                 </form>
             </div>
 
-            {/* Form Đổi Mật Khẩu */}
             <div className="account-section">
                 <h3>Đổi Mật Khẩu</h3>
                 <form onSubmit={handleChangePassword}>

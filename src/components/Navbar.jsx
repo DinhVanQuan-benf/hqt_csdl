@@ -1,7 +1,8 @@
-import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import AuthModal from './AuthModal';
 import '../styles/navbar.css';
+import { removeToken, getRole, isAuthenticated } from '../utils/auth';
 
 // Navigation items based on role
 const navItems = {
@@ -21,19 +22,58 @@ const navItems = {
     ],
 };
 
-function Navbar({ role, setRole }) {
+function Navbar({ setRole }) {
+    const [role, setRoleState] = useState('guest');
     const [showAuthModal, setShowAuthModal] = useState(false);
     const location = useLocation();
+    const navigate = useNavigate();
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        setRole('guest');
-        window.location.href = '/';
+    // Ánh xạ role từ backend sang frontend
+    const mapRole = (backendRole) => {
+        if (Array.isArray(backendRole)) {
+            if (backendRole.includes('ADMIN')) return 'admin';
+            if (backendRole.includes('ADMIN_FINANCE')) return 'admin_service';
+            if (backendRole.includes('ADMIN_BUILDING')) return 'admin_room';
+            if (backendRole.includes('admin')) return 'admin'; // Tương thích token hiện tại
+        } else {
+            if (backendRole === 'ADMIN') return 'admin';
+            if (backendRole === 'ADMIN_FINANCE') return 'admin_service';
+            if (backendRole === 'ADMIN_BUILDING') return 'admin_room';
+            if (backendRole === 'admin') return 'admin'; // Tương thích token hiện tại
+        }
+        return 'guest';
     };
 
-    const handleLoginSuccess = (newRole) => {
+    // Lấy role từ token khi load trang
+    useEffect(() => {
+        if (isAuthenticated()) {
+            const storedRole = getRole();
+            const mappedRole = mapRole(storedRole);
+            setRoleState(mappedRole);
+            setRole(mappedRole);
+        } else {
+            setRoleState('guest');
+            setRole('guest');
+        }
+    }, []);
+
+    const handleLogout = () => {
+        removeToken();
+        setRoleState('guest');
+        setRole('guest');
+        navigate('/');
+    };
+
+    const handleLoginSuccess = (backendRole) => {
+        const mappedRole = mapRole(backendRole);
         setShowAuthModal(false);
-        setRole(newRole);
+        setRoleState(mappedRole);
+        setRole(mappedRole);
+        navigate(location.pathname, { state: { role: mappedRole } });
+    };
+
+    const handleNavClick = (path) => {
+        navigate(path, { state: { role } });
     };
 
     return (
@@ -45,14 +85,14 @@ function Navbar({ role, setRole }) {
                 </div>
                 <div className="navbar-menu">
                     {navItems[role]?.map((item) => (
-                        <Link
+                        <div
                             key={item.id}
-                            to={item.path}
+                            onClick={() => handleNavClick(item.path)}
                             className={`navbar-item ${location.pathname === item.path ? 'active' : ''}`}
                         >
                             <div className={`navbar-icon ${item.icon}`}></div>
                             <span className="navbar-label">{item.label}</span>
-                        </Link>
+                        </div>
                     ))}
                 </div>
                 {role !== 'guest' && (
@@ -61,7 +101,13 @@ function Navbar({ role, setRole }) {
                         <div className="navbar-user-info">
                             <span className="navbar-user-name">John Doe</span>
                             <span className="navbar-user-role">
-                                {role === 'admin' ? 'Quản lý' : role === 'admin_service' ? 'Quản lý dịch vụ' : 'Quản lý phòng'}
+                                {role === 'admin'
+                                    ? 'Quản lý'
+                                    : role === 'admin_service'
+                                        ? 'Quản lý dịch vụ'
+                                        : role === 'admin_room'
+                                            ? 'Quản lý phòng'
+                                            : 'Người dùng'}
                             </span>
                         </div>
                     </Link>

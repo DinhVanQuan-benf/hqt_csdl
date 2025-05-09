@@ -1,9 +1,8 @@
-
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../utils/axiosConfig';
 import '../styles/services.css';
 
-function ServicesPage() {
+function ServicesPage({ role }) {
     const [services, setServices] = useState([]);
     const [modal, setModal] = useState(null);
     const [rooms, setRooms] = useState([]);
@@ -14,7 +13,7 @@ function ServicesPage() {
     useEffect(() => {
         const fetchServices = async () => {
             try {
-                const res = await axios.get('/api/service/all');
+                const res = await axios.get('/service/all');
                 const data = Array.isArray(res.data[0]) ? res.data[0] : res.data;
                 setServices(data);
             } catch (err) {
@@ -24,7 +23,7 @@ function ServicesPage() {
 
         const fetchRooms = async () => {
             try {
-                const res = await axios.get('/api/room/all');
+                const res = await axios.get('/room/all');
                 setRooms(res.data);
             } catch (err) {
                 console.error('Lỗi khi lấy phòng:', err);
@@ -47,6 +46,10 @@ function ServicesPage() {
 
     const handleAddService = async (e) => {
         e.preventDefault();
+        if (role !== 'admin_service') {
+            alert('Chỉ quản lý dịch vụ được thêm dịch vụ!');
+            return;
+        }
         const formData = new FormData(e.target);
         const newService = {
             name: formData.get('name'),
@@ -54,7 +57,7 @@ function ServicesPage() {
             description: formData.get('description')
         };
         try {
-            await axios.post('/api/service/add', newService);
+            await axios.post('/service/add', newService);
             setServices(prev => [...prev, { id: Date.now(), ...newService }]);
             setModal(null);
         } catch (err) {
@@ -64,6 +67,10 @@ function ServicesPage() {
 
     const handleEditService = async (e, id) => {
         e.preventDefault();
+        if (role !== 'admin_service') {
+            alert('Chỉ quản lý dịch vụ được sửa dịch vụ!');
+            return;
+        }
         const formData = new FormData(e.target);
         const updatedService = {
             name: formData.get('name'),
@@ -71,7 +78,7 @@ function ServicesPage() {
             description: formData.get('description')
         };
         try {
-            await axios.put(`/api/service/update/${id}`, updatedService);
+            await axios.put(`/service/update/${id}`, updatedService);
             setServices(prev =>
                 prev.map(service => (service.id === id ? { id, ...updatedService } : service))
             );
@@ -82,8 +89,12 @@ function ServicesPage() {
     };
 
     const handleDeleteService = async (id) => {
+        if (role !== 'admin_service') {
+            alert('Chỉ quản lý dịch vụ được xóa dịch vụ!');
+            return;
+        }
         try {
-            await axios.delete(`/api/service/remove/${id}`);
+            await axios.delete(`/service/remove/${id}`);
             setServices(prev => prev.filter(service => service.id !== id));
         } catch (err) {
             console.error('Lỗi xóa dịch vụ:', err);
@@ -98,7 +109,7 @@ function ServicesPage() {
         };
         try {
             await axios.post(
-                `/api/usedservice/add/${selectedResidentId}/${idService}`,
+                `/usedservice/add/${selectedResidentId}/${idService}`,
                 booking
             );
             alert('Yêu cầu đặt dịch vụ đã được gửi!');
@@ -200,4 +211,5 @@ function ServicesPage() {
         </div>
     );
 }
+
 export default ServicesPage;

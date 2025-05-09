@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios from "../utils/axiosConfig";
 import "../styles/contract.css";
 
-function ContractModal({ room, rentalTime = {}, residents = [], onClose }) {
+function ContractModal({ room, rentalTime = {}, residents = [], onClose, role }) {
     const [startTime, setStartTime] = useState(rentalTime.startDate || "");
     const [endTime, setEndTime] = useState(rentalTime.endDate || "");
     const [residentList, setResidentList] = useState(residents);
@@ -15,6 +15,7 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose }) {
         phone: "",
         email: ""
     });
+    const [error, setError] = useState("");
 
     useEffect(() => {
         setStartTime(rentalTime.startDate || "");
@@ -22,21 +23,16 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose }) {
         setResidentList(residents);
     }, [rentalTime, residents]);
 
-    const fetchResidents = async () => {
-        try {
-            const res = await axios.get(`/api/rentaltime/${rentalTime.id}/residents`);
-            setResidentList(res.data);
-        } catch (err) {
-            console.error("Lỗi khi load danh sách dân cư", err);
-        }
-    };
-
     const handleResidentFormChange = (e) => {
         const { name, value } = e.target;
         setResidentForm({ ...residentForm, [name]: value });
     };
 
     const handleAddResident = () => {
+        if (role !== "admin_room") {
+            setError("Chỉ quản lý phòng được thêm cư dân!");
+            return;
+        }
         setEditingResidentIndex(null);
         setResidentForm({
             name: "",
@@ -46,68 +42,94 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose }) {
             email: ""
         });
         setShowResidentForm(true);
+        setError("");
     };
 
     const handleEditResident = (index) => {
+        if (role !== "admin_room") {
+            setError("Chỉ quản lý phòng được sửa cư dân!");
+            return;
+        }
         setEditingResidentIndex(index);
         setResidentForm({ ...residentList[index] });
         setShowResidentForm(true);
+        setError("");
     };
 
     const handleDeleteResident = async (residentId) => {
+        if (role !== "admin_room") {
+            setError("Chỉ quản lý phòng được xóa cư dân!");
+            return;
+        }
         if (window.confirm("Xoá dân cư này?")) {
             try {
                 await axios.put(`/api/room/break/${residentId}`, {});
                 alert("Xoá dân cư thành công");
-                await fetchResidents();
+                setError("");
+                onClose(); // Đóng modal để RoomsPage tải lại danh sách cư dân
             } catch (err) {
-                alert("Lỗi khi xoá dân cư");
+                console.error("Lỗi khi xóa cư dân:", err);
+                setError("Lỗi khi xóa cư dân!");
             }
         }
     };
 
     const handleSaveResident = async () => {
+        if (role !== "admin_room") {
+            setError("Chỉ quản lý phòng được lưu cư dân!");
+            return;
+        }
+        if (!residentForm.name || !residentForm.dateOfBirth || !residentForm.idNumber || !residentForm.phone || !residentForm.email) {
+            setError("Vui lòng nhập đầy đủ thông tin cư dân!");
+            return;
+        }
         try {
             if (editingResidentIndex !== null) {
                 const residentId = residentList[editingResidentIndex].id;
-                await axios.put(`/api/resident/edit/${residentId}`, residentForm);
+                const payload = { ...residentForm };
+                await axios.put(`/api/resident/edit/${residentId}`, payload);
                 alert("Sửa dân cư thành công");
             } else {
                 const rentalTimePayload = {
                     startTime,
                     endTime,
-                    resident: residentForm
+                    resident: { ...residentForm }
                 };
                 await axios.put(`/api/room/add/resident/${room.id}`, rentalTimePayload);
                 alert("Thêm dân cư thành công");
             }
-
             setShowResidentForm(false);
             setResidentForm({ name: "", dateOfBirth: "", idNumber: "", phone: "", email: "" });
-            await fetchResidents();
+            setError("");
+            onClose(); // Đóng modal để RoomsPage tải lại danh sách cư dân
         } catch (err) {
-            console.error(err);
-            alert("Lỗi khi lưu dân cư");
+            console.error("Lỗi khi lưu cư dân:", err);
+            setError("Lỗi khi lưu cư dân! Vui lòng kiểm tra dữ liệu.");
         }
     };
 
     const handleSubmit = async () => {
+        if (role !== "admin_room") {
+            setError("Chỉ quản lý phòng được lưu hợp đồng!");
+            return;
+        }
+        if (!startTime || !endTime) {
+            setError("Vui lòng nhập đầy đủ thời gian thuê!");
+            return;
+        }
         try {
-            if (!startTime || !endTime) {
-                alert("Vui lòng nhập đầy đủ thời gian thuê");
-                return;
-            }
-
-            await axios.put(`/api/rentaltime/update/${rentalTime.id}`, {
+            const payload = {
                 startTime,
                 endTime,
                 resident: {}
-            });
-
+            };
+            await axios.put(`/api/rentaltime/update/${rentalTime.id}`, payload);
             alert("Lưu hợp đồng thành công");
+            setError("");
             onClose();
         } catch (err) {
-            alert("Lỗi khi lưu hợp đồng");
+            console.error("Lỗi khi lưu hợp đồng:", err);
+            setError("Lỗi khi lưu hợp đồng! Vui lòng kiểm tra dữ liệu.");
         }
     };
 
@@ -115,6 +137,7 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose }) {
         <div className="contract-modal">
             <div className="contract-modal-content">
                 <h2>Hợp đồng - {room.name}</h2>
+                {error && <p className="error">{error}</p>}
 
                 <label>Thời gian bắt đầu:</label>
                 <input

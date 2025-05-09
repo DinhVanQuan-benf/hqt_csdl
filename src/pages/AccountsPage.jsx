@@ -1,16 +1,15 @@
-// UserManagement.jsx
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import UserModal from "../components/UserModal";
-import "../styles/user.css";
+import React, { useEffect, useState } from 'react';
+import axios from '../utils/axiosConfig';
+import UserModal from '../components/UserModal';
+import '../styles/user.css';
 
-function UserManagement() {
+function UserManagement({ role }) {
     const [users, setUsers] = useState([]);
     const [filteredUsers, setFilteredUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [rooms, setRooms] = useState([]);
-    const [searchName, setSearchName] = useState("");
+    const [searchName, setSearchName] = useState('');
 
     useEffect(() => {
         fetchUsers();
@@ -23,19 +22,19 @@ function UserManagement() {
 
     const fetchUsers = async () => {
         try {
-            const res = await axios.get("/api/user/all");
+            const res = await axios.get('/user/all');
             setUsers(res.data);
         } catch (err) {
-            console.error("Lỗi khi lấy danh sách người dùng:", err);
+            console.error('Lỗi khi lấy danh sách người dùng:', err);
         }
     };
 
     const fetchRooms = async () => {
         try {
-            const res = await axios.get("/api/room/all");
+            const res = await axios.get('/room/all');
             setRooms(res.data);
         } catch (err) {
-            console.error("Lỗi khi lấy danh sách phòng:", err);
+            console.error('Lỗi khi lấy danh sách phòng:', err);
         }
     };
 
@@ -50,11 +49,15 @@ function UserManagement() {
     };
 
     const handleDelete = async (id) => {
+        if (role !== 'admin') {
+            alert('Chỉ quản lý được xóa người dùng!');
+            return;
+        }
         try {
-            await axios.delete(`/api/user/remove/${id}`);
+            await axios.delete(`/user/remove/${id}`);
             fetchUsers();
         } catch (err) {
-            console.error("Lỗi khi xoá người dùng:", err);
+            console.error('Lỗi khi xóa người dùng:', err);
         }
     };
 
@@ -80,7 +83,6 @@ function UserManagement() {
                     value={searchName}
                     onChange={(e) => setSearchName(e.target.value)}
                 />
-
             </div>
 
             <table>
@@ -107,10 +109,10 @@ function UserManagement() {
                             <td>{user.phone}</td>
                             <td>{user.email}</td>
                             <td>{user.position}</td>
-                            <td>{user.room?.name || "Chưa có"}</td>
+                            <td>{user.room?.name || 'Chưa có'}</td>
                             <td>
                                 <button onClick={() => openModal(user)}>Sửa</button>
-                                <button onClick={() => handleDelete(user.id)}>Xoá</button>
+                                <button onClick={() => handleDelete(user.id)}>Xóa</button>
                             </td>
                         </tr>
                     ))}

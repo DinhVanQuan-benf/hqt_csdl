@@ -1,133 +1,93 @@
 import { useState } from 'react';
+import axios from '../utils/axiosConfig';
 import '../styles/register.css';
-import { useNavigate } from 'react-router-dom';
-import instance from '../axiosConfig'; // Sử dụng axios instance đã cấu hình
+import { setToken, getRole } from '../utils/auth';
 
 function AuthModal({ onLoginSuccess, onClose }) {
-    const [activeTab, setActiveTab] = useState('login');
-    const [loginCredentials, setLoginCredentials] = useState({ email: '', password: '', remember: false });
-    const [registerCredentials, setRegisterCredentials] = useState({ email: '', password: '' });
+    const [formData, setFormData] = useState({
+        username: '',
+        password: ''
+    });
     const [error, setError] = useState('');
 
-    const navigate = useNavigate();
-
-    const handleLoginSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await instance.post('/user/login', {
-                email: loginCredentials.email,
-                password: loginCredentials.password,
-            });
-            const token = response.data.token; // Giả định backend trả về token trong response
-            localStorage.setItem('token', token);
-            if (loginCredentials.remember) {
-                localStorage.setItem('remember', 'true');
-            }
-            const decoded = jwtDecode(token);
-            const userRole = decoded.roles[0].replace('ROLE_', '').toLowerCase();
-            onLoginSuccess(userRole);
-            navigate('/');
-        } catch (err) {
-            setError('Đăng nhập thất bại. Vui lòng kiểm tra email hoặc mật khẩu.');
-            console.error('Lỗi đăng nhập:', err);
+    // Ánh xạ role từ backend sang frontend
+    const mapRole = (backendRole) => {
+        if (Array.isArray(backendRole)) {
+            if (backendRole.includes('ADMIN')) return 'admin';
+            if (backendRole.includes('ADMIN_FINANCE')) return 'admin_service';
+            if (backendRole.includes('ADMIN_BUILDING')) return 'admin_room';
+            if (backendRole.includes('admin')) return 'admin'; // Tương thích token hiện tại
+        } else {
+            if (backendRole === 'ADMIN') return 'admin';
+            if (backendRole === 'ADMIN_FINANCE') return 'admin_service';
+            if (backendRole === 'ADMIN_BUILDING') return 'admin_room';
+            if (backendRole === 'admin') return 'admin'; // Tương thích token hiện tại
         }
+        return null;
     };
 
-    const handleRegisterSubmit = async (e) => {
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await instance.post('/user/signup', {
-                email: registerCredentials.email,
-                password: registerCredentials.password,
+            const res = await axios.post('/user/login', formData, {
+                headers: { 'Content-Type': 'application/json' }
             });
-            alert('Đăng ký thành công! Vui lòng đăng nhập.');
-            setActiveTab('login');
+
+            const { accessToken, tokenType } = res.data;
+            const token = `${tokenType} ${accessToken}`;
+            setToken(token);
+            const backendRole = getRole();
+
+            if (!backendRole) {
+                setError('Không tìm thấy role trong token!');
+                return;
+            }
+
+            const mappedRole = mapRole(backendRole);
+            if (!mappedRole) {
+                setError('Role không hợp lệ!');
+                return;
+            }
+
+            alert('Đăng nhập thành công!');
+            onLoginSuccess(mappedRole);
+            onClose();
         } catch (err) {
-            setError('Đăng ký thất bại. Vui lòng thử lại.');
-            console.error('Lỗi đăng ký:', err);
+            console.error('Lỗi đăng nhập:', err);
+            setError('Đăng nhập thất bại! Vui lòng kiểm tra thông tin.');
         }
     };
 
     return (
-        <div className="modal">
-            <div className="modal-content">
-                <div className="auth-tabs">
-                    <button
-                        className={`auth-tab ${activeTab === 'login' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('login')}
-                    >
-                        Đăng nhập
-                    </button>
-                    <button
-                        className={`auth-tab ${activeTab === 'register' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('register')}
-                    >
-                        Tạo tài khoản
-                    </button>
-                </div>
+        <div className="modal-overlay">
+            <div className="modal auth-modal">
+                <h2>Đăng nhập</h2>
                 {error && <p className="error">{error}</p>}
-                {activeTab === 'login' ? (
-                    <form onSubmit={handleLoginSubmit} className="login-form">
-                        <label>
-                            E-mail:
-                            <input
-                                type="email"
-                                value={loginCredentials.email}
-                                onChange={(e) => setLoginCredentials({ ...loginCredentials, email: e.target.value })}
-                                required
-                            />
-                        </label>
-                        <label>
-                            Password:
-                            <input
-                                type="password"
-                                value={loginCredentials.password}
-                                onChange={(e) => setLoginCredentials({ ...loginCredentials, password: e.target.value })}
-                                required
-                            />
-                        </label>
-                        <div className="login-options">
-                            <label className="remember-me">
-                                <input
-                                    type="checkbox"
-                                    checked={loginCredentials.remember}
-                                    onChange={(e) => setLoginCredentials({ ...loginCredentials, remember: e.target.checked })}
-                                />
-                                Nhớ đăng nhập
-                            </label>
-                            <a href="/forgot-password" className="forgot-password">Quên mật khẩu?</a>
-                        </div>
-                        <div className="modal-actions">
-                            <button type="submit">Đăng nhập</button>
-                            <button type="button" onClick={onClose}>Hủy</button>
-                        </div>
-                    </form>
-                ) : (
-                    <form onSubmit={handleRegisterSubmit} className="login-form">
-                        <label>
-                            E-mail:
-                            <input
-                                type="email"
-                                value={registerCredentials.email}
-                                onChange={(e) => setRegisterCredentials({ ...registerCredentials, email: e.target.value })}
-                                required
-                            />
-                        </label>
-                        <label>
-                            Password:
-                            <input
-                                type="password"
-                                value={registerCredentials.password}
-                                onChange={(e) => setRegisterCredentials({ ...registerCredentials, password: e.target.value })}
-                                required
-                            />
-                        </label>
-                        <div className="modal-actions">
-                            <button type="submit">Tạo tài khoản</button>
-                            <button type="button" onClick={onClose}>Hủy</button>
-                        </div>
-                    </form>
-                )}
+                <form onSubmit={handleSubmit} className="auth-form">
+                    <input
+                        name="username"
+                        placeholder="Tên đăng nhập"
+                        value={formData.username}
+                        onChange={handleChange}
+                        required
+                    />
+                    <input
+                        name="password"
+                        type="password"
+                        placeholder="Mật khẩu"
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
+                    />
+                    <div className="form-actions">
+                        <button type="submit">Đăng nhập</button>
+                        <button type="button" onClick={onClose}>Hủy</button>
+                    </div>
+                </form>
             </div>
         </div>
     );

@@ -1,29 +1,38 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
 import AuthModal from './AuthModal';
+import { isAuthenticated } from '../utils/auth';
 
-function ProtectedRoute({ role, children }) {
+function ProtectedRoute({ role, requiredRole, setRole, children }) {
     const [showAuthModal, setShowAuthModal] = useState(false);
-    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!isAuthenticated()) {
+            setShowAuthModal(true);
+        }
+    }, []);
 
     const handleLoginSuccess = (newRole) => {
         setShowAuthModal(false);
-        navigate(window.location.pathname);
+        setRole(newRole); // Cập nhật role trong App.jsx
     };
 
-    if (!role || role === 'guest') {
-        setShowAuthModal(true);
+    if (!isAuthenticated()) {
         return (
             <>
-                {children}
                 {showAuthModal && (
                     <AuthModal
                         onLoginSuccess={handleLoginSuccess}
                         onClose={() => setShowAuthModal(false)}
                     />
                 )}
+                <Navigate to="/" replace />
             </>
         );
+    }
+
+    if (requiredRole && role !== requiredRole) {
+        return <Navigate to="/" replace />;
     }
 
     return children;

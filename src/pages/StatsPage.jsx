@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios from '../utils/axiosConfig';
 import { Pie, Bar } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -29,7 +29,7 @@ function StatsPage() {
     useEffect(() => {
         const fetchOverview = async () => {
             try {
-                const res = await axios.get('/api/resident/all');
+                const res = await axios.get('/resident/all');
                 const residents = res.data;
 
                 const totalResidents = residents.length;
@@ -152,7 +152,6 @@ function StatsPage() {
                         <p>{stats.revenue.toLocaleString()} VND</p>
                     </div>
                 </div>
-
                 <div className="stat-card"><h3>Số dịch vụ sử dụng tháng này</h3><p>{stats.servicesUsedThisMonth}</p></div>
             </div>
 

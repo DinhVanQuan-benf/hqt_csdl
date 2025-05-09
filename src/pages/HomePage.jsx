@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import '../styles/home.css';
-import axios from "axios";
+import axios1 from '../utils/axiosConfig';
+import axios from 'axios';
 
 function HomePage({ role }) {
     const [rating, setRating] = useState(0);
@@ -22,11 +23,11 @@ function HomePage({ role }) {
 
     const fetchBuilding = async () => {
         try {
-            const res = await axios.get("/api/1");
+            const res = await axios.get('api/building/1');
             setBuilding(res.data);
             setEditForm(res.data);
         } catch (err) {
-            console.error("Lỗi khi tải thông tin tòa nhà:", err);
+            console.error('Lỗi khi tải thông tin tòa nhà:', err);
         }
     };
 
@@ -36,13 +37,17 @@ function HomePage({ role }) {
     };
 
     const handleEditSubmit = async () => {
+        if (role !== 'admin') {
+            alert('Chỉ quản lý được sửa thông tin tòa nhà!');
+            return;
+        }
         try {
-            await axios.put(`/api/update-building/1`, editForm);
-            alert("Cập nhật tòa nhà thành công");
+            await axios1.put(`/building/update/1`, editForm);
+            alert('Cập nhật tòa nhà thành công');
             setShowEditModal(false);
-            fetchBuilding(); // reload dữ liệu mới
+            fetchBuilding();
         } catch (err) {
-            alert("Lỗi khi cập nhật tòa nhà");
+            alert('Lỗi khi cập nhật tòa nhà');
         }
     };
 
@@ -64,17 +69,30 @@ function HomePage({ role }) {
             <h2>Thông Tin Tòa Nhà</h2>
             <img src="https://cdn3.ivivu.com/2020/04/nhung-toa-nha-co-thiet-ke-khong-tuong-o-trung-quoc-ivivu-6.jpg" alt="building" />
 
-            {role === 'manager' && (
+            {role === 'admin' && (
                 <button onClick={() => setShowEditModal(true)}>Sửa thông tin tòa nhà</button>
             )}
 
             <div className="card-container">
-                {Object.entries(building).map(([key, value]) => (
-                    <div className="card" key={key}>
-                        <h3>{key}</h3>
-                        <p>{value}</p>
+                <div className="card-container">
+                    <div className="card">
+                        <h3>Tên</h3>
+                        <p>{building.name}</p>
                     </div>
-                ))}
+                    <div className="card">
+                        <h3>Địa chỉ</h3>
+                        <p>{building.address}</p>
+                    </div>
+                    <div className="card">
+                        <h3>Số tầng</h3>
+                        <p>{building.floorCount}</p>
+                    </div>
+                    <div className="card">
+                        <h3>Tổng số phòng</h3>
+                        <p>{building.totalRooms}</p>
+                    </div>
+                </div>
+
             </div>
 
             <h2>Đánh Giá và Bình Luận</h2>
@@ -127,7 +145,6 @@ function HomePage({ role }) {
                 )}
             </div>
 
-            {/* Modal Sửa Tòa Nhà */}
             {showEditModal && (
                 <div className="modal-overlay">
                     <div className="modal">
@@ -148,7 +165,7 @@ function HomePage({ role }) {
                         <input name="status" value={editForm.status} onChange={handleEditChange} />
 
                         <div className="modal-actions">
-                            <button className="cancel" onClick={() => setShowEditModal(false)}>Huỷ</button>
+                            <button className="cancel" onClick={() => setShowEditModal(false)}>Hủy</button>
                             <button className="save" onClick={handleEditSubmit}>Lưu</button>
                         </div>
                     </div>

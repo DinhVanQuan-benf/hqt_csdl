@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import RoomModal from "../components/RoomModal";
-import ContractModal from "../components/ContractModal";
-import "../styles/rooms.css";
+import React, { useEffect, useState } from 'react';
+import axios from '../utils/axiosConfig';
+import RoomModal from '../components/RoomModal';
+import ContractModal from '../components/ContractModal';
+import '../styles/rooms.css';
 
-function RoomManagement() {
+function RoomManagement({ role }) {
     const [rooms, setRooms] = useState([]);
     const [showRoomModal, setShowRoomModal] = useState(false);
     const [editingRoom, setEditingRoom] = useState(null);
@@ -18,30 +18,35 @@ function RoomManagement() {
 
     const fetchRooms = async () => {
         try {
-            const res = await axios.get("/api/room/all");
+            const res = await axios.get('/room/all');
             setRooms(res.data);
         } catch (err) {
-            console.error("Lỗi khi tải danh sách phòng:", err);
+            console.error('Lỗi khi tải danh sách phòng:', err);
         }
     };
 
     const handleAddRoom = () => {
+        if (role !== 'admin_room') {
+            alert('Chỉ quản lý phòng được thêm phòng!');
+            return;
+        }
         setEditingRoom(null);
         setShowRoomModal(true);
     };
 
     const handleEditRoom = (room) => {
+        if (role !== 'admin_room') {
+            alert('Chỉ quản lý phòng được sửa phòng!');
+            return;
+        }
         setEditingRoom(room);
         setShowRoomModal(true);
     };
 
     const handleStatusClick = (room) => {
         setSelectedRoom(room);
-
-        // Lấy rentalTime mới nhất
         const latest = room.rentalTimes?.[room.rentalTimes.length - 1] || [];
         setLatestRental(latest || null);
-        // Lấy tất cả cư dân từ các rentalTimes
         const allResidents = room.rentalTimes?.reduce((acc, rental) => {
             if (rental.resident) {
                 acc.push(rental.resident);
@@ -50,6 +55,7 @@ function RoomManagement() {
         }, []) || [];
         setResidents(allResidents);
     };
+
     const closeModals = () => {
         setShowRoomModal(false);
         setSelectedRoom(null);
@@ -77,9 +83,9 @@ function RoomManagement() {
                                     className="clickable-status"
                                     onClick={() => handleStatusClick(room)}
                                 >
-                                    {room.rentStatus === "available"
-                                        ? "Thêm hợp đồng"
-                                        : `${latest?.startDate || ""} -> ${latest?.endDate || ""}`}
+                                    {room.rentStatus === 'available'
+                                        ? 'Thêm hợp đồng'
+                                        : `${latest?.startDate || ''} -> ${latest?.endDate || ''}`}
                                 </span>
                             </p>
                             <div className="actions">
