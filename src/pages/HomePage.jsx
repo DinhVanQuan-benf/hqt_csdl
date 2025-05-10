@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import '../styles/home.css';
 import axios1 from '../utils/axiosConfig';
-import axios from 'axios';
 
 function HomePage({ role }) {
     const [rating, setRating] = useState(0);
@@ -23,7 +22,7 @@ function HomePage({ role }) {
 
     const fetchBuilding = async () => {
         try {
-            const res = await axios.get('api/building/1');
+            const res = await axios1.get('building/1');
             setBuilding(res.data);
             setEditForm(res.data);
         } catch (err) {
