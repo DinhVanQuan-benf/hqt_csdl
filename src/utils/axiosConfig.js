@@ -14,7 +14,7 @@ instance.interceptors.request.use(
         if (token) {
             config.headers.Authorization = `${token}`;  // Đảm bảo định dạng chính xác
         }
-        console.log(config.headers.Authorization);  // Kiểm tra token
+        console.log(token);  // Kiểm tra token
         return config;
     },
     (error) => Promise.reject(error)

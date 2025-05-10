@@ -13,14 +13,14 @@ function AuthModal({ onLoginSuccess, onClose }) {
     // Ánh xạ role từ backend sang frontend
     const mapRole = (backendRole) => {
         if (Array.isArray(backendRole)) {
-            if (backendRole.includes('ROLE_ADMIN')) return 'admin';
-            if (backendRole.includes('ROLE_ADMIN_FINANCE')) return 'admin_service';
-            if (backendRole.includes('ROLE_ADMIN_BUILDING')) return 'admin_room';
+            if (backendRole.includes('ADMIN')) return 'admin';
+            if (backendRole.includes('ADMIN_FINANCE')) return 'admin_service';
+            if (backendRole.includes('ADMIN_BUILDING')) return 'admin_room';
             if (backendRole.includes('admin')) return 'admin'; // Tương thích token hiện tại
         } else {
-            if (backendRole === 'ROLE_ADMIN') return 'admin';
-            if (backendRole === 'ROLE_ADMIN_FINANCE') return 'admin_service';
-            if (backendRole === 'ROLE_ADMIN_BUILDING') return 'admin_room';
+            if (backendRole === 'ADMIN') return 'admin';
+            if (backendRole === 'ADMIN_FINANCE') return 'admin_service';
+            if (backendRole === 'ADMIN_BUILDING') return 'admin_room';
             if (backendRole === 'admin') return 'admin'; // Tương thích token hiện tại
         }
         return null;
