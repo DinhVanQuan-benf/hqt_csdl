@@ -3,6 +3,7 @@ import axios from '../utils/axiosConfig';
 import RoomModal from '../components/RoomModal';
 import ContractModal from '../components/ContractModal';
 import '../styles/rooms.css';
+import axios1 from 'axios';
 
 function RoomManagement({ role }) {
     const [rooms, setRooms] = useState([]);
@@ -18,7 +19,7 @@ function RoomManagement({ role }) {
 
     const fetchRooms = async () => {
         try {
-            const res = await axios.get('/room/all');
+            const res = await axios1.get('/room/all');
             setRooms(res.data);
         } catch (err) {
             console.error('Lỗi khi tải danh sách phòng:', err);
@@ -26,19 +27,12 @@ function RoomManagement({ role }) {
     };
 
     const handleAddRoom = () => {
-        if (role !== 'admin_room') {
-            alert('Chỉ quản lý phòng được thêm phòng!');
-            return;
-        }
         setEditingRoom(null);
         setShowRoomModal(true);
     };
 
     const handleEditRoom = (room) => {
-        if (role !== 'admin_room') {
-            alert('Chỉ quản lý phòng được sửa phòng!');
-            return;
-        }
+
         setEditingRoom(room);
         setShowRoomModal(true);
     };

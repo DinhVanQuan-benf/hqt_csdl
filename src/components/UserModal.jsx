@@ -59,10 +59,10 @@ function UserModal({ user, onClose, rooms, role }) {
                 payload.password = formData.password;
             }
             if (user) {
-                await axios.put(`/api/user/update/${user.id}`, payload);
+                await axios.put(`/user/update/${user.id}`, payload);
                 alert("Cập nhật người dùng thành công!");
             } else {
-                await axios.post("/api/user/add", payload);
+                await axios.post("/user/add", payload);
                 alert("Thêm người dùng thành công!");
             }
             setError("");

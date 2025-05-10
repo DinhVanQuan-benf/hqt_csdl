@@ -37,10 +37,7 @@ function HomePage({ role }) {
     };
 
     const handleEditSubmit = async () => {
-        if (role !== 'admin') {
-            alert('Chỉ quản lý được sửa thông tin tòa nhà!');
-            return;
-        }
+
         try {
             await axios1.put(`/building/update/1`, editForm);
             alert('Cập nhật tòa nhà thành công');

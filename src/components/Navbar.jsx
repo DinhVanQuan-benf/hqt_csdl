@@ -9,10 +9,14 @@ const navItems = {
     admin: [
         { id: 'accounts', label: 'Quản lý tài khoản', icon: 'account', path: '/accounts' },
         { id: 'stats', label: 'Thống kê', icon: 'stats', path: '/stats' },
+        { id: 'services', label: 'Dịch vụ', icon: 'service', path: '/service' },
+        { id: 'invoices', label: 'Hóa đơn', icon: 'invoice', path: '/bill' },
+        { id: 'rooms', label: 'Phòng', icon: 'room', path: '/rooms' },
+
     ],
     admin_service: [
-        { id: 'services', label: 'Dịch vụ', icon: 'service', path: '/services' },
-        { id: 'invoices', label: 'Hóa đơn', icon: 'invoice', path: '/invoices' },
+        { id: 'services', label: 'Dịch vụ', icon: 'service', path: '/service' },
+        { id: 'invoices', label: 'Hóa đơn', icon: 'invoice', path: '/bill' },
     ],
     admin_room: [
         { id: 'rooms', label: 'Phòng', icon: 'room', path: '/rooms' },
@@ -28,17 +32,16 @@ function Navbar({ setRole }) {
     const location = useLocation();
     const navigate = useNavigate();
 
-    // Ánh xạ role từ backend sang frontend
     const mapRole = (backendRole) => {
         if (Array.isArray(backendRole)) {
-            if (backendRole.includes('ADMIN')) return 'admin';
-            if (backendRole.includes('ADMIN_FINANCE')) return 'admin_service';
-            if (backendRole.includes('ADMIN_BUILDING')) return 'admin_room';
+            if (backendRole.includes('ROLE_ADMIN')) return 'admin';
+            if (backendRole.includes('ROLE_ADMIN_FINANCE')) return 'admin_service';
+            if (backendRole.includes('ROLE_ADMIN_BUILDING')) return 'admin_room';
             if (backendRole.includes('admin')) return 'admin'; // Tương thích token hiện tại
         } else {
-            if (backendRole === 'ADMIN') return 'admin';
-            if (backendRole === 'ADMIN_FINANCE') return 'admin_service';
-            if (backendRole === 'ADMIN_BUILDING') return 'admin_room';
+            if (backendRole === 'ROLE_ADMIN') return 'admin';
+            if (backendRole === 'ROLE_ADMIN_FINANCE') return 'admin_service';
+            if (backendRole === 'ROLE_ADMIN_BUILDING') return 'admin_room';
             if (backendRole === 'admin') return 'admin'; // Tương thích token hiện tại
         }
         return 'guest';

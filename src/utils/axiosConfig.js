@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getToken, removeToken } from './auth';
 
 const instance = axios.create({
-    baseURL: 'http://localhost:8080',
+    baseURL: '/api',
     headers: {
         'Content-Type': 'application/json'
     }
@@ -12,12 +12,14 @@ instance.interceptors.request.use(
     (config) => {
         const token = getToken();
         if (token) {
-            config.headers.Authorization = token;
+            config.headers.Authorization = `${token}`;  // Đảm bảo định dạng chính xác
         }
+        console.log(config.headers.Authorization);  // Kiểm tra token
         return config;
     },
     (error) => Promise.reject(error)
 );
+
 
 instance.interceptors.response.use(
     (response) => response,

@@ -63,7 +63,7 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose, role })
         }
         if (window.confirm("Xoá dân cư này?")) {
             try {
-                await axios.put(`/api/room/break/${residentId}`, {});
+                await axios.put(`/room/break/${residentId}`, {});
                 alert("Xoá dân cư thành công");
                 setError("");
                 onClose(); // Đóng modal để RoomsPage tải lại danh sách cư dân
@@ -87,7 +87,7 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose, role })
             if (editingResidentIndex !== null) {
                 const residentId = residentList[editingResidentIndex].id;
                 const payload = { ...residentForm };
-                await axios.put(`/api/resident/edit/${residentId}`, payload);
+                await axios.put(`/resident/edit/${residentId}`, payload);
                 alert("Sửa dân cư thành công");
             } else {
                 const rentalTimePayload = {
@@ -95,7 +95,7 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose, role })
                     endTime,
                     resident: { ...residentForm }
                 };
-                await axios.put(`/api/room/add/resident/${room.id}`, rentalTimePayload);
+                await axios.put(`/room/add/resident/${room.id}`, rentalTimePayload);
                 alert("Thêm dân cư thành công");
             }
             setShowResidentForm(false);
@@ -123,7 +123,7 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose, role })
                 endTime,
                 resident: {}
             };
-            await axios.put(`/api/rentaltime/update/${rentalTime.id}`, payload);
+            await axios.put(`/rentaltime/update/${rentalTime.id}`, payload);
             alert("Lưu hợp đồng thành công");
             setError("");
             onClose();

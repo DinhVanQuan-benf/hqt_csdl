@@ -29,10 +29,6 @@ function RoomModal({ room, onClose, role }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (role !== "admin_room") {
-            setError("Chỉ quản lý phòng được thêm/sửa phòng!");
-            return;
-        }
         try {
             const payload = {
                 name: formData.name,
@@ -46,10 +42,10 @@ function RoomModal({ room, onClose, role }) {
                 return;
             }
             if (room) {
-                await axios.put(`/api/room/edit/${room.id}`, payload);
+                await axios.put(`/room/edit/${room.id}`, payload);
                 alert("Cập nhật phòng thành công!");
             } else {
-                await axios.post("/api/room/add", payload);
+                await axios.post("/room/add", payload);
                 alert("Thêm phòng thành công!");
             }
             setError("");

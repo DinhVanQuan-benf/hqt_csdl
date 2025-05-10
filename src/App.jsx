@@ -17,16 +17,15 @@ function App() {
 
   // Ánh xạ role từ backend sang frontend
   const mapRole = (backendRole) => {
+    console.log('Mapping backend role:', backendRole); // Log for debugging
     if (Array.isArray(backendRole)) {
       if (backendRole.includes('ADMIN')) return 'admin';
       if (backendRole.includes('ADMIN_FINANCE')) return 'admin_service';
       if (backendRole.includes('ADMIN_BUILDING')) return 'admin_room';
-      if (backendRole.includes('admin')) return 'admin'; // Tương thích token hiện tại
     } else {
       if (backendRole === 'ADMIN') return 'admin';
       if (backendRole === 'ADMIN_FINANCE') return 'admin_service';
       if (backendRole === 'ADMIN_BUILDING') return 'admin_room';
-      if (backendRole === 'admin') return 'admin'; // Tương thích token hiện tại
     }
     return 'guest';
   };
@@ -35,7 +34,7 @@ function App() {
     const initializeAuth = async () => {
       if (isAuthenticated()) {
         const backendRole = getRole();
-        setRole(mapRole(backendRole));
+        setRole(mapRole(backendRole) || 'guest');
       } else {
         setRole('guest');
       }
@@ -53,12 +52,12 @@ function App() {
         <main className="main-content">
           <Routes>
             <Route path="/" element={<HomePage role={role} />} />
-            <Route path="/rooms" element={<RoomsPage role={role} setRole={setRole} />} />
-            <Route path="/services" element={<ProtectedRoute role={role} requiredRole="admin_service" setRole={setRole}><ServicesPage role={role} /></ProtectedRoute>} />
-            <Route path="/invoices" element={<ProtectedRoute role={role} requiredRole="admin_service" setRole={setRole}><InvoicesPage role={role} /></ProtectedRoute>} />
-            <Route path="/acc" element={<ProtectedRoute role={role} setRole={setRole}><AccPage role={role} /></ProtectedRoute>} />
+            <Route path="/rooms" element={<ProtectedRoute role={role} requiredRole={["admin_room", "admin"]} ><RoomsPage role={role} setRole={setRole} /></ProtectedRoute>} />
+            <Route path="/service" element={<ProtectedRoute role={role} requiredRole={["admin_service", "admin"]} ><ServicesPage role={role} /></ProtectedRoute>} />
+            <Route path="/bill" element={<ProtectedRoute role={role} requiredRole={["admin_service", "admin"]}><InvoicesPage role={role} /></ProtectedRoute>} />
+            <Route path="/acc" element={<ProtectedRoute role={role} requiredRole={['admin', "admin_room", 'admin_service']}><AccPage role={role} /></ProtectedRoute>} />
             <Route path="/accounts" element={<ProtectedRoute role={role} requiredRole="admin" setRole={setRole}><UserManagement role={role} /></ProtectedRoute>} />
-            <Route path="/stats" element={<ProtectedRoute role={role} requiredRole="admin" setRole={setRole}><StatsPage role={role} /></ProtectedRoute>} />
+            <Route path="/stats" element={<ProtectedRoute role={role} requiredRole="admin"><StatsPage role={role} /></ProtectedRoute>} />
             <Route path="*" element={<h1>Trang Không Tồn Tại</h1>} />
           </Routes>
         </main>
