@@ -12,7 +12,7 @@ instance.interceptors.request.use(
     (config) => {
         const token = getToken();
         if (token) {
-            config.headers.Authorization = `${token}`;  // Đảm bảo định dạng chính xác
+            config.headers.Authorization = `Bearer ${token}`;  // Đảm bảo định dạng chính xác
         }
         console.log(token);  // Kiểm tra token
         return config;

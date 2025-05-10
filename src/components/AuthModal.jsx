@@ -35,8 +35,8 @@ function AuthModal({ onLoginSuccess, onClose }) {
         try {
             const res = await axios.post('user/login', formData);
 
-            const { accessToken, tokenType } = res.data;
-            const token = `${tokenType} ${accessToken}`;
+            const { accessToken } = res.data;
+            const token = `${accessToken}`;
             setToken(token);
             const backendRole = getRole();
 
