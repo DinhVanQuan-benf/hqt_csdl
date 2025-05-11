@@ -26,8 +26,8 @@ instance.interceptors.response.use(
     (error) => {
         if (error.response) {
             if (error.response.status === 401) {
-                removeToken();
-                window.location.href = '/';
+                // removeToken();
+                // window.location.href = '/';
                 return Promise.reject(new Error('Phiên đăng nhập hết hạn!'));
             } else if (error.response.status === 403) {
                 console.error('Lỗi 403:', error.response.data);

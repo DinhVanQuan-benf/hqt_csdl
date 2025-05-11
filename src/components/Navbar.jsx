@@ -54,23 +54,22 @@ function Navbar({ setRole }) {
 
     // Lấy role từ token khi load trang
     useEffect(() => {
-        const loadUser = async () => {
-            if (isAuthenticated()) {
-                const storedRole = getRole();
-                const mappedRole = mapRole(storedRole);
-                setRoleState(mappedRole);
-                setRole(mappedRole);
-
-                const name = await fetchUserInfo();
-                setFullname(name);
-            } else {
-                setRoleState('guest');
-                setRole('guest');
-            }
-        };
         loadUser();
     }, []);
+    const loadUser = async () => {
+        if (isAuthenticated()) {
+            const storedRole = getRole();
+            const mappedRole = mapRole(storedRole);
+            setRoleState(mappedRole);
+            setRole(mappedRole);
 
+            const name = await fetchUserInfo();
+            setFullname(name);
+        } else {
+            setRoleState('guest');
+            setRole('guest');
+        }
+    };
 
     const handleLogout = () => {
         removeToken();
@@ -79,13 +78,17 @@ function Navbar({ setRole }) {
         navigate('/');
     };
 
-    const handleLoginSuccess = (backendRole) => {
+    const handleLoginSuccess = async (backendRole) => {
         const mappedRole = mapRole(backendRole);
         setShowAuthModal(false);
         setRoleState(mappedRole);
         setRole(mappedRole);
+
+        await loadUser();
+
         navigate(location.pathname, { state: { role: mappedRole } });
     };
+
 
     const handleNavClick = (path) => {
         navigate(path, { state: { role } });

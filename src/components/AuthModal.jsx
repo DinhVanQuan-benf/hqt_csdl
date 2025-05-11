@@ -54,6 +54,7 @@ function AuthModal({ onLoginSuccess, onClose }) {
             alert('Đăng nhập thành công!');
             onLoginSuccess(mappedRole);
             onClose();
+
         } catch (err) {
             console.error('Lỗi đăng nhập:', err);
             setError('Đăng nhập thất bại! Vui lòng kiểm tra thông tin.');
