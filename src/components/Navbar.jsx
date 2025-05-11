@@ -103,8 +103,7 @@ function Navbar({ setRole }) {
             const getRes = await axios.get(`/user/get`, {
                 params: { username },
             });
-
-            return getRes.data.fullname;
+            return getRes.data.fullName;
         } catch (err) {
             console.error('Lỗi khi lấy thông tin:', err);
         } return "error";

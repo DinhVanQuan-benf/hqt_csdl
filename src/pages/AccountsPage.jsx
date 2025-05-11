@@ -39,10 +39,6 @@ function UserManagement({ role }) {
     };
 
     const handleDelete = async (id) => {
-        if (role !== 'admin') {
-            alert('Chỉ quản lý được xóa người dùng!');
-            return;
-        }
         try {
             await axios.delete(`/user/remove/${id}`);
             fetchUsers();

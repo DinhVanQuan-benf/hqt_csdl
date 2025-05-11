@@ -46,10 +46,6 @@ function ServicesPage({ role }) {
 
     const handleAddService = async (e) => {
         e.preventDefault();
-        if (role !== 'admin_service') {
-            alert('Chỉ quản lý dịch vụ được thêm dịch vụ!');
-            return;
-        }
         const formData = new FormData(e.target);
         const newService = {
             name: formData.get('name'),
@@ -67,10 +63,6 @@ function ServicesPage({ role }) {
 
     const handleEditService = async (e, id) => {
         e.preventDefault();
-        if (role !== 'admin_service') {
-            alert('Chỉ quản lý dịch vụ được sửa dịch vụ!');
-            return;
-        }
         const formData = new FormData(e.target);
         const updatedService = {
             name: formData.get('name'),
@@ -89,10 +81,7 @@ function ServicesPage({ role }) {
     };
 
     const handleDeleteService = async (id) => {
-        if (role !== 'admin_service') {
-            alert('Chỉ quản lý dịch vụ được xóa dịch vụ!');
-            return;
-        }
+
         try {
             await axios.delete(`/service/remove/${id}`);
             setServices(prev => prev.filter(service => service.id !== id));
