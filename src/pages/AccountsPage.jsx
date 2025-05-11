@@ -8,12 +8,10 @@ function UserManagement({ role }) {
     const [filteredUsers, setFilteredUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [rooms, setRooms] = useState([]);
     const [searchName, setSearchName] = useState('');
 
     useEffect(() => {
         fetchUsers();
-        fetchRooms();
     }, []);
 
     useEffect(() => {
@@ -29,14 +27,6 @@ function UserManagement({ role }) {
         }
     };
 
-    const fetchRooms = async () => {
-        try {
-            const res = await axios.get('/room/all');
-            setRooms(res.data);
-        } catch (err) {
-            console.error('Lỗi khi lấy danh sách phòng:', err);
-        }
-    };
 
     const filterUsers = () => {
         let filtered = [...users];
@@ -95,7 +85,6 @@ function UserManagement({ role }) {
                         <th>Điện thoại</th>
                         <th>Email</th>
                         <th>Chức vụ</th>
-                        <th>Phòng</th>
                         <th>Hành động</th>
                     </tr>
                 </thead>
@@ -109,7 +98,6 @@ function UserManagement({ role }) {
                             <td>{user.phone}</td>
                             <td>{user.email}</td>
                             <td>{user.position}</td>
-                            <td>{user.room?.name || 'Chưa có'}</td>
                             <td>
                                 <button onClick={() => openModal(user)}>Sửa</button>
                                 <button onClick={() => handleDelete(user.id)}>Xóa</button>
@@ -121,7 +109,7 @@ function UserManagement({ role }) {
 
             <button className="add-button" onClick={() => openModal()}>+</button>
 
-            {isModalOpen && <UserModal user={selectedUser} rooms={rooms} onClose={closeModal} />}
+            {isModalOpen && <UserModal user={selectedUser} onClose={closeModal} />}
         </div>
     );
 }

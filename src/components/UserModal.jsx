@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "../utils/axiosConfig";
 import "../styles/user.css";
 
-function UserModal({ user, onClose, rooms, role }) {
+function UserModal({ user, onClose, role }) {
     const [formData, setFormData] = useState({
         username: "",
         password: "",
@@ -25,7 +25,6 @@ function UserModal({ user, onClose, rooms, role }) {
                 phone: user.phone || "",
                 email: user.email || "",
                 position: user.position || "user",
-                roomId: user.room?.id || ""
             });
         }
     }, [user]);
@@ -37,10 +36,6 @@ function UserModal({ user, onClose, rooms, role }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (role !== "admin") {
-            setError("Chỉ quản lý được thêm/sửa người dùng!");
-            return;
-        }
         try {
             const payload = {
                 username: formData.username,
@@ -49,7 +44,6 @@ function UserModal({ user, onClose, rooms, role }) {
                 phone: formData.phone || null,
                 email: formData.email || null,
                 position: formData.position,
-                roomId: formData.roomId ? Number(formData.roomId) : null
             };
             if (!user) {
                 if (!formData.password) {
@@ -123,15 +117,10 @@ function UserModal({ user, onClose, rooms, role }) {
                         placeholder="Email"
                     />
                     <select name="position" value={formData.position} onChange={handleChange}>
-                        <option value="">-- Chức vụ --</option>
-                        <option value="user">User</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                    <select name="roomId" value={formData.roomId} onChange={handleChange}>
-                        <option value="">-- Chọn phòng --</option>
-                        {rooms.map((room) => (
-                            <option key={room.id} value={room.id}>{room.name}</option>
-                        ))}
+                        <option value="">USER</option>
+                        <option value="ADMIN_BUILDING">ADMIN_BUILDING</option>
+                        <option value="ADMIN">ADMIN</option>
+                        <option value="ADMIN_FINANCE">ADMIN_FINANCE</option>
                     </select>
                     <div className="modal-buttons">
                         <button type="submit">Lưu</button>

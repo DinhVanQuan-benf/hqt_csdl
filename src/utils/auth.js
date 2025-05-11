@@ -19,8 +19,10 @@ export const removeToken = () => {
 export const decodeToken = () => {
     const token = getToken();
     if (!token) return null;
+    const tmp = jwtDecode(token)
+    console.log(tmp);
     try {
-        return jwtDecode(token);
+        return tmp;
     } catch (error) {
         console.error('Lỗi khi giải mã token:', error);
         return null;

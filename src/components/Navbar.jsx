@@ -3,6 +3,9 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import AuthModal from './AuthModal';
 import '../styles/navbar.css';
 import { removeToken, getRole, isAuthenticated } from '../utils/auth';
+import axios from '../utils/axiosConfig';
+import { getToken } from '../utils/auth';
+import { jwtDecode } from 'jwt-decode';
 
 // Navigation items based on role
 const navItems = {
@@ -31,6 +34,8 @@ function Navbar({ setRole }) {
     const [showAuthModal, setShowAuthModal] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
+    const [fullname, setFullname] = useState('');
+
 
     const mapRole = (backendRole) => {
         if (Array.isArray(backendRole)) {
@@ -49,16 +54,23 @@ function Navbar({ setRole }) {
 
     // Lấy role từ token khi load trang
     useEffect(() => {
-        if (isAuthenticated()) {
-            const storedRole = getRole();
-            const mappedRole = mapRole(storedRole);
-            setRoleState(mappedRole);
-            setRole(mappedRole);
-        } else {
-            setRoleState('guest');
-            setRole('guest');
-        }
+        const loadUser = async () => {
+            if (isAuthenticated()) {
+                const storedRole = getRole();
+                const mappedRole = mapRole(storedRole);
+                setRoleState(mappedRole);
+                setRole(mappedRole);
+
+                const name = await fetchUserInfo();
+                setFullname(name);
+            } else {
+                setRoleState('guest');
+                setRole('guest');
+            }
+        };
+        loadUser();
     }, []);
+
 
     const handleLogout = () => {
         removeToken();
@@ -78,7 +90,25 @@ function Navbar({ setRole }) {
     const handleNavClick = (path) => {
         navigate(path, { state: { role } });
     };
+    const fetchUserInfo = async () => {
+        const token = getToken();
+        let username;
+        try {
+            const decoded = jwtDecode(token);
+            username = decoded.sub;
+        } catch (err) {
+            console.error('Lỗi khi lấy thông tin:', err);
+        }
+        try {
+            const getRes = await axios.get(`/user/get`, {
+                params: { username },
+            });
 
+            return getRes.data.fullname;
+        } catch (err) {
+            console.error('Lỗi khi lấy thông tin:', err);
+        } return "error";
+    };
     return (
         <>
             <nav className="navbar">
@@ -102,7 +132,7 @@ function Navbar({ setRole }) {
                     <Link to="/acc" className="navbar-user">
                         <div className="navbar-avatar"></div>
                         <div className="navbar-user-info">
-                            <span className="navbar-user-name">John Doe</span>
+                            <span className="navbar-user-name">{fullname}</span>
                             <span className="navbar-user-role">
                                 {role === 'admin'
                                     ? 'Quản lý'

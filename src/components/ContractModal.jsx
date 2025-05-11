@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "../utils/axiosConfig";
 import "../styles/contract.css";
 
-function ContractModal({ room, rentalTime = {}, residents = [], onClose, role }) {
+function ContractModal({ room, rentalTime = {}, residents = [], onClose }) {
     const [startTime, setStartTime] = useState(rentalTime.startDate || "");
     const [endTime, setEndTime] = useState(rentalTime.endDate || "");
     const [residentList, setResidentList] = useState(residents);
@@ -29,10 +29,6 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose, role })
     };
 
     const handleAddResident = () => {
-        if (role !== "admin_room") {
-            setError("Chỉ quản lý phòng được thêm cư dân!");
-            return;
-        }
         setEditingResidentIndex(null);
         setResidentForm({
             name: "",
@@ -46,10 +42,6 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose, role })
     };
 
     const handleEditResident = (index) => {
-        if (role !== "admin_room") {
-            setError("Chỉ quản lý phòng được sửa cư dân!");
-            return;
-        }
         setEditingResidentIndex(index);
         setResidentForm({ ...residentList[index] });
         setShowResidentForm(true);
@@ -57,10 +49,6 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose, role })
     };
 
     const handleDeleteResident = async (residentId) => {
-        if (role !== "admin_room") {
-            setError("Chỉ quản lý phòng được xóa cư dân!");
-            return;
-        }
         if (window.confirm("Xoá dân cư này?")) {
             try {
                 await axios.put(`/room/break/${residentId}`, {});
@@ -75,14 +63,6 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose, role })
     };
 
     const handleSaveResident = async () => {
-        if (role !== "admin_room") {
-            setError("Chỉ quản lý phòng được lưu cư dân!");
-            return;
-        }
-        if (!residentForm.name || !residentForm.dateOfBirth || !residentForm.idNumber || !residentForm.phone || !residentForm.email) {
-            setError("Vui lòng nhập đầy đủ thông tin cư dân!");
-            return;
-        }
         try {
             if (editingResidentIndex !== null) {
                 const residentId = residentList[editingResidentIndex].id;
@@ -109,10 +89,6 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose, role })
     };
 
     const handleSubmit = async () => {
-        if (role !== "admin_room") {
-            setError("Chỉ quản lý phòng được lưu hợp đồng!");
-            return;
-        }
         if (!startTime || !endTime) {
             setError("Vui lòng nhập đầy đủ thời gian thuê!");
             return;

@@ -6,10 +6,13 @@ import { jwtDecode } from 'jwt-decode';
 
 function AccountManagement() {
     const [userInfo, setUserInfo] = useState({
-        name: '',
+        id: '',
+        fullname: '',
         email: '',
         phone: '',
-        address: ''
+        dateOfBirth: '',
+        password: "",
+        position: ""
     });
     const [passwordData, setPasswordData] = useState({
         oldPassword: '',
@@ -19,39 +22,32 @@ function AccountManagement() {
     const [isEditing, setIsEditing] = useState(false);
     const [message, setMessage] = useState('');
 
-    // Lấy user ID từ token
-    const getUserId = () => {
+    const fetchUserInfo = async () => {
         const token = getToken();
-        if (token) {
-            try {
-                const decoded = jwtDecode(token);
-                return decoded.sub; // Giả sử 'sub' chứa username, cần endpoint để lấy ID
-            } catch (error) {
-                console.error('Invalid token:', error);
-                return null;
-            }
+        let username;
+        try {
+            const decoded = jwtDecode(token);
+            username = decoded.sub;
+        } catch (error) {
+            setMessage('Token không hợp lệ.');
+            return;
         }
-        return null;
+        try {
+            const getRes = await axios.get(`/user/get`, {
+                params: { username },
+            });
+
+            const user = getRes.data;
+            setUserInfo(user);
+        } catch (err) {
+            console.error('Lỗi khi lấy thông tin:', err);
+            setMessage('Không thể tải thông tin người dùng.');
+        }
     };
 
     useEffect(() => {
         fetchUserInfo();
     }, []);
-
-    const fetchUserInfo = async () => {
-        const username = getUserId();
-        if (!username) {
-            setMessage('Vui lòng đăng nhập để xem thông tin.');
-            return;
-        }
-        try {
-            const response = await axios.get(`/user/${username}`);
-            setUserInfo(response.data);
-        } catch (error) {
-            console.error('Lỗi khi lấy thông tin người dùng:', error);
-            setMessage('Không thể tải thông tin người dùng.');
-        }
-    };
 
     const handleUserInfoChange = (e) => {
         const { name, value } = e.target;
@@ -65,42 +61,48 @@ function AccountManagement() {
 
     const handleUpdateUserInfo = async (e) => {
         e.preventDefault();
-        const username = getUserId();
-        if (!username) {
-            setMessage('Vui lòng đăng nhập để cập nhật.');
-            return;
-        }
+        const token = getToken();
         try {
-            await axios.put(`/user/update/${username}`, userInfo);
+            await axios.put(`/user/update/${userInfo.id}`, userInfo, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
             setMessage('Cập nhật thông tin thành công!');
             setIsEditing(false);
         } catch (error) {
-            console.error('Lỗi khi cập nhật thông tin:', error);
-            setMessage('Cập nhật thông tin thất bại.');
+            console.error('Cập nhật lỗi:', error);
+            setMessage('Không thể cập nhật thông tin.');
         }
     };
 
     const handleChangePassword = async (e) => {
         e.preventDefault();
-        const username = getUserId();
-        if (!username) {
-            setMessage('Vui lòng đăng nhập để đổi mật khẩu.');
+        if (!passwordData.oldPassword) {
+            setMessage('Vui lòng nhập mật khẩu hiện tại.');
+            return;
+        }
+        if (passwordData.oldPassword !== userInfo.password) {
+            setMessage('Mật khẩu không đúng');
             return;
         }
         if (passwordData.newPassword !== passwordData.confirmPassword) {
-            setMessage('Mật khẩu mới và xác nhận mật khẩu không khớp.');
+            setMessage('Mật khẩu mới không khớp.');
             return;
         }
+        if (!passwordData.newPassword) {
+            setMessage('Vui lòng nhập mật khẩu mới.');
+            return;
+        }
+
         try {
-            await axios.put(`/user/update/${username}`, {
+            await axios.put(`/user/update/${userInfo.id}`, {
                 ...userInfo,
                 password: passwordData.newPassword
             });
             setMessage('Đổi mật khẩu thành công!');
             setPasswordData({ oldPassword: '', newPassword: '', confirmPassword: '' });
         } catch (error) {
-            console.error('Lỗi khi đổi mật khẩu:', error);
-            setMessage('Đổi mật khẩu thất bại. Vui lòng kiểm tra mật khẩu cũ.');
+            console.error('Đổi mật khẩu lỗi:', error);
+            setMessage('Đổi mật khẩu thất bại.');
         }
     };
 
@@ -116,8 +118,8 @@ function AccountManagement() {
                         <label>Họ và Tên:</label>
                         <input
                             type="text"
-                            name="name"
-                            value={userInfo.name}
+                            name="fullname"
+                            value={userInfo.fullname}
                             onChange={handleUserInfoChange}
                             disabled={!isEditing}
                             required
@@ -145,11 +147,11 @@ function AccountManagement() {
                         />
                     </div>
                     <div className="form-group">
-                        <label>Địa Chỉ:</label>
+                        <label>Ngày sinh:</label>
                         <input
                             type="text"
                             name="address"
-                            value={userInfo.address}
+                            value={userInfo.dateOfBirth}
                             onChange={handleUserInfoChange}
                             disabled={!isEditing}
                         />
@@ -169,16 +171,17 @@ function AccountManagement() {
                 <h3>Đổi Mật Khẩu</h3>
                 <form onSubmit={handleChangePassword}>
                     <div className="form-group">
-                        <label>Mật Khẩu Cũ:</label>
-                        <input
-                            type="password"
-                            name="oldPassword"
-                            value={passwordData.oldPassword}
-                            onChange={handlePasswordChange}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
+                        <div className="form-group">
+                            <label>Mật Khẩu Hiện Tại:</label>
+                            <input
+                                type="password"
+                                name="oldPassword"
+                                value={passwordData.oldPassword}
+                                onChange={handlePasswordChange}
+                                required
+                            />
+                        </div>
+
                         <label>Mật Khẩu Mới:</label>
                         <input
                             type="password"
@@ -189,7 +192,7 @@ function AccountManagement() {
                         />
                     </div>
                     <div className="form-group">
-                        <label>Xác Nhận Mật Khẩu Mới:</label>
+                        <label>Xác Nhận Mật Khẩu:</label>
                         <input
                             type="password"
                             name="confirmPassword"
