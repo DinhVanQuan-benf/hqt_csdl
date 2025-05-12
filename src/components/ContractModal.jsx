@@ -21,13 +21,12 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose }) {
         setStartTime(rentalTime.startDate || "");
         setEndTime(rentalTime.endDate || "");
         setResidentList(residents);
-    }, [rentalTime, residents]);
+    }, [rentalTime]); // Không cần dùng residents ở đây nữa nếu tự quản lý danh sách nội bộ
 
     const handleResidentFormChange = (e) => {
         const { name, value } = e.target;
         setResidentForm({ ...residentForm, [name]: value });
     };
-
     const handleAddResident = () => {
         setEditingResidentIndex(null);
         setResidentForm({
@@ -52,9 +51,9 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose }) {
         if (window.confirm("Xoá dân cư này?")) {
             try {
                 await axios.put(`/room/break/${residentId}`, {});
+                setResidentList(residentList.filter((r) => r.id !== residentId));
                 alert("Xoá dân cư thành công");
                 setError("");
-                onClose(); // Đóng modal để RoomsPage tải lại danh sách cư dân
             } catch (err) {
                 console.error("Lỗi khi xóa cư dân:", err);
                 setError("Lỗi khi xóa cư dân!");
@@ -68,6 +67,9 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose }) {
                 const residentId = residentList[editingResidentIndex].id;
                 const payload = { ...residentForm };
                 await axios.put(`/resident/edit/${residentId}`, payload);
+                const updatedList = [...residentList];
+                updatedList[editingResidentIndex] = { ...residentList[editingResidentIndex], ...residentForm };
+                setResidentList(updatedList);
                 alert("Sửa dân cư thành công");
             } else {
                 const rentalTimePayload = {
@@ -76,15 +78,34 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose }) {
                     resident: { ...residentForm }
                 };
                 await axios.put(`/room/add/resident/${room.id}`, rentalTimePayload);
+                setResidentList([...residentList, rentalTimePayload.resident]);
                 alert("Thêm dân cư thành công");
             }
             setShowResidentForm(false);
             setResidentForm({ name: "", dateOfBirth: "", idNumber: "", phone: "", email: "" });
             setError("");
-            onClose(); // Đóng modal để RoomsPage tải lại danh sách cư dân
         } catch (err) {
             console.error("Lỗi khi lưu cư dân:", err);
             setError("Lỗi khi lưu cư dân! Vui lòng kiểm tra dữ liệu.");
+        }
+    };
+    const handleDeleteContract = async () => {
+        if (!window.confirm("Bạn có chắc chắn muốn xoá hợp đồng?")) return;
+
+        try {
+            // Xoá toàn bộ cư dân
+            for (const resident of residentList) {
+                await axios.put(`/room/break/${resident.id}`, {});
+            }
+            await axios.put(`/room/edit/${room.id}`, { ...room, rentStatus: "available" });
+
+            setResidentList([]);
+            alert("Xoá hợp đồng thành công");
+
+            // onClose();
+        } catch (err) {
+            console.error("Lỗi khi xoá hợp đồng:", err);
+            setError("Lỗi khi xoá hợp đồng!");
         }
     };
 
@@ -100,12 +121,14 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose }) {
                 resident: {}
             };
             await axios.put(`/rentaltime/update/${rentalTime.id}`, payload);
+            await axios.put(`/room/edit/${room.id}`, { ...room, rentStatus: "rented" });
+
             alert("Lưu hợp đồng thành công");
             setError("");
             onClose();
         } catch (err) {
             console.error("Lỗi khi lưu hợp đồng:", err);
-            setError("Lỗi khi lưu hợp đồng! Vui lòng kiểm tra dữ liệu.");
+            setError("Hợp đồng phải có ít nhất 1 cư dân");
         }
     };
 
@@ -130,6 +153,7 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose }) {
                     onChange={(e) => setEndTime(e.target.value)}
                     required
                 />
+                <button onClick={handleDeleteContract} className="danger-button">Xoá hợp đồng</button>
 
                 <h3>Danh sách dân cư</h3>
                 <table className="resident-table">
@@ -206,8 +230,9 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose }) {
                 <button onClick={handleAddResident}>+ Thêm dân cư</button>
 
                 <div className="modal-actions">
-                    <button onClick={onClose}>Đóng</button>
                     <button onClick={handleSubmit}>Lưu hợp đồng</button>
+                    <button onClick={onClose}>Đóng</button>
+
                 </div>
             </div>
         </div>

@@ -26,28 +26,16 @@ function RoomManagement({ role }) {
     };
 
     const handleAddRoom = () => {
-        if (role === "guest") {
-            alert("bạn cần đăng nhập để thực hiện hành vi này");
-            return;
-        }
         setEditingRoom(null);
         setShowRoomModal(true);
     };
 
     const handleEditRoom = (room) => {
-        if (role === "guest") {
-            alert("bạn cần đăng nhập để thực hiện hành vi này");
-            return;
-        }
         setEditingRoom(room);
         setShowRoomModal(true);
     };
 
     const handleStatusClick = (room) => {
-        if (role === "guest") {
-            alert("bạn cần đăng nhập để thực hiện hành vi này");
-            return;
-        }
         setSelectedRoom(room);
         const latest = room.rentalTimes?.[room.rentalTimes.length - 1] || [];
         setLatestRental(latest || null);

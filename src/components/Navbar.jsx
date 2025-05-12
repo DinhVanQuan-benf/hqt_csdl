@@ -24,9 +24,6 @@ const navItems = {
     admin_room: [
         { id: 'rooms', label: 'Phòng', icon: 'room', path: '/rooms' },
     ],
-    guest: [
-        { id: 'rooms', label: 'Xem phòng', icon: 'room', path: '/rooms' },
-    ],
 };
 
 function Navbar({ setRole }) {
