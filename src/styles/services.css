@@ -18,6 +18,20 @@
     color: #333;
 }
 
+.add-button {
+    display: block;
+    margin: 0 auto 30px;
+    background-color: #ff7a00;
+    color: white;
+    font-size: 24px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
 
 .service-container {
     display: grid;
@@ -94,7 +108,8 @@
 
 /* Modal popup giữa màn hình */
 .modal {
-    color: #191717;
+    background-color: #1e1e1e;
+    color: #fff;
     /* chữ trắng */
     padding: 30px;
     border-radius: 12px;
@@ -107,7 +122,7 @@
 .service-form h3 {
     margin-bottom: 20px;
     text-align: center;
-    color: #000000;
+    color: #ffffff;
     /* trắng rõ */
 }
 
@@ -116,7 +131,7 @@
     display: block;
     margin-bottom: 6px;
     font-weight: 500;
-    color: #191818;
+    color: #fff;
     /* trắng */
 }
 

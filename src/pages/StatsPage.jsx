@@ -35,7 +35,7 @@ function StatsPage() {
                 const totalResidents = residents.length;
                 const rentalRoomIds = new Set(residents.flatMap(r => r.rentalTimes));
                 const occupiedRooms = rentalRoomIds.size;
-                const totalRooms = 25;
+                const totalRooms = 50;
 
                 const now = new Date();
                 const currentMonth = now.getMonth();
@@ -152,6 +152,7 @@ function StatsPage() {
                         <p>{stats.revenue.toLocaleString()} VND</p>
                     </div>
                 </div>
+
                 <div className="stat-card"><h3>Số dịch vụ sử dụng tháng này</h3><p>{stats.servicesUsedThisMonth}</p></div>
             </div>
 

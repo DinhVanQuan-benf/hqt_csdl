@@ -1,8 +1,9 @@
+
 import { useState, useEffect } from 'react';
 import axios from '../utils/axiosConfig';
 import '../styles/services.css';
 
-function ServicesPage({ role }) {
+function ServicesPage() {
     const [services, setServices] = useState([]);
     const [modal, setModal] = useState(null);
     const [rooms, setRooms] = useState([]);
@@ -81,7 +82,6 @@ function ServicesPage({ role }) {
     };
 
     const handleDeleteService = async (id) => {
-
         try {
             await axios.delete(`/service/remove/${id}`);
             setServices(prev => prev.filter(service => service.id !== id));
