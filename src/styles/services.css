@@ -5,41 +5,26 @@
     padding: 0;
 }
 
-.page.services-page {
+.page.svc-services-page {
     padding: 40px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #f9f9f9;
 }
 
-.services-page h2 {
+.svc-services-page h2 {
     text-align: center;
     font-size: 2rem;
     margin-bottom: 30px;
     color: #333;
 }
 
-.add-button {
-    display: block;
-    margin: 0 auto 30px;
-    background-color: #ff7a00;
-    color: white;
-    font-size: 24px;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.service-container {
+.svc-service-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
 }
 
-.service-card {
+.svc-service-card {
     background: white;
     border-radius: 12px;
     padding: 20px;
@@ -47,28 +32,28 @@
     transition: transform 0.2s ease;
 }
 
-.service-card:hover {
+.svc-service-card:hover {
     transform: translateY(-5px);
 }
 
-.service-card h3 {
+.svc-service-card h3 {
     color: #ff7a00;
     margin-bottom: 10px;
 }
 
-.service-card p {
+.svc-service-card p {
     margin: 8px 0;
     color: #555;
     font-size: 15px;
 }
 
-.service-actions {
+.svc-service-actions {
     display: flex;
     justify-content: space-between;
     margin-top: 15px;
 }
 
-.service-actions button {
+.svc-service-actions button {
     flex: 1;
     margin: 0 4px;
     padding: 8px 12px;
@@ -79,66 +64,59 @@
     font-size: 14px;
 }
 
-.edit-button {
+.svc-edit-button {
     background-color: #007bff;
 }
 
-.delete-button {
+.svc-delete-button {
     background-color: #dc3545;
 }
 
-.book-button {
+.svc-book-button {
     background-color: #28a745;
 }
 
-/* Modal Overlay - chỉnh lại cho full màu tối, đè lên hoàn toàn */
-.modal-overlay {
+/* Modal Overlay */
+.svc-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
     background-color: rgba(20, 20, 20, 0.95);
-    /* Đậm, không trong suốt */
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
 }
 
-/* Modal popup giữa màn hình */
-.modal {
-    background-color: #1e1e1e;
-    color: #fff;
-    /* chữ trắng */
+/* Modal */
+.svc-modal {
+    color: #191717;
     padding: 30px;
     border-radius: 12px;
     width: 100%;
     max-width: 500px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    background-color: #fff;
 }
 
-/* Form heading */
-.service-form h3 {
+.svc-service-form h3 {
     margin-bottom: 20px;
     text-align: center;
-    color: #ffffff;
-    /* trắng rõ */
+    color: #000000;
 }
 
-/* Label text */
-.service-form label {
+.svc-service-form label {
     display: block;
     margin-bottom: 6px;
     font-weight: 500;
-    color: #fff;
-    /* trắng */
+    color: #191818;
 }
 
-/* Input fields */
-.service-form input,
-.service-form textarea,
-.service-form select {
+.svc-service-form input,
+.svc-service-form textarea,
+.svc-service-form select {
     background-color: #fff;
     color: #000;
     border: 1px solid #ccc;
@@ -149,8 +127,13 @@
     margin-bottom: 15px;
 }
 
-/* Buttons */
-.form-actions button {
+.svc-form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.svc-form-actions button {
     padding: 10px;
     border: none;
     border-radius: 6px;
@@ -162,16 +145,26 @@
     max-width: 48%;
 }
 
-.form-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-}
-
-.form-actions button[type="submit"] {
+.svc-form-actions button[type="submit"] {
     background-color: #ff7a00;
 }
 
-.form-actions button[type="button"] {
+.svc-form-actions button[type="button"] {
     background-color: #6c757d;
+}
+
+.svc-add-button {
+    display: block;
+    margin: 0 auto 20px auto;
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    background-color: #ff7a00;
+    color: white;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    text-align: center;
+    line-height: 28px;
+    cursor: pointer;
 }

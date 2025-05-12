@@ -29,13 +29,18 @@ function StatsPage() {
     useEffect(() => {
         const fetchOverview = async () => {
             try {
-                const res = await axios.get('/resident/all');
-                const residents = res.data;
+                const [residentsRes, buildingsRes, roomsRes] = await Promise.all([
+                    axios.get('/resident/all'),
+                    axios.get('/building/all'),
+                    axios.get('/room/all'),
+                ]);
 
-                const totalResidents = residents.length;
-                const rentalRoomIds = new Set(residents.flatMap(r => r.rentalTimes));
-                const occupiedRooms = rentalRoomIds.size;
-                const totalRooms = 50;
+                const residents = residentsRes.data;
+                const buildings = buildingsRes.data;
+                const rooms = roomsRes.data;
+
+                const totalRooms = buildings.reduce((sum, b) => sum + b.totalRooms, 0);
+                const occupiedRooms = rooms.length;
 
                 const now = new Date();
                 const currentMonth = now.getMonth();
@@ -47,20 +52,31 @@ function StatsPage() {
                 const serviceCountMap = {};
                 const revenueMonthMap = Array(12).fill(0);
 
-                residents.forEach(r => {
-                    r.usedServices.forEach(us => {
-                        const serviceName = us.service.name;
-                        serviceCountMap[serviceName] = (serviceCountMap[serviceName] || 0) + 1;
-                        us.bills?.forEach(bill => {
-                            const billDate = new Date(bill.paymentDate);
-                            const amount = bill.paymentAmount || 0;
-                            totalRevenue += amount;
-                            revenueMonthMap[billDate.getMonth()] += amount;
-                            if (billDate.getMonth() === currentMonth && billDate.getFullYear() === currentYear) {
-                                monthlyRevenue += amount;
-                                monthlyServicesCount++;
-                            }
-                        });
+                residents.forEach(resident => {
+                    resident.usedServices.forEach(serviceUsage => {
+                        const name = serviceUsage.service?.name || 'Không rõ';
+                        const quantity = serviceUsage.quantity || 1;
+
+                        if (Array.isArray(serviceUsage.bills) && serviceUsage.bills.length > 0) {
+                            // Cộng số lượng thay vì cộng 1
+                            serviceCountMap[name] = (serviceCountMap[name] || 0) + quantity;
+
+                            serviceUsage.bills.forEach(bill => {
+                                const billDate = new Date(bill.paymentDate);
+                                const amount = bill.paymentAmount || 0;
+
+                                totalRevenue += amount;
+                                revenueMonthMap[billDate.getMonth()] += amount;
+
+                                if (
+                                    billDate.getMonth() === currentMonth &&
+                                    billDate.getFullYear() === currentYear
+                                ) {
+                                    monthlyRevenue += amount;
+                                    monthlyServicesCount += quantity;
+                                }
+                            });
+                        }
                     });
                 });
 
@@ -70,7 +86,7 @@ function StatsPage() {
                     .map(([name, count]) => ({ name, count }));
 
                 setStats({
-                    totalResidents,
+                    totalResidents: residents.length,
                     totalRooms,
                     occupiedRooms,
                     revenue: totalRevenue,
@@ -80,12 +96,15 @@ function StatsPage() {
                     revenueByMonth: revenueMonthMap,
                 });
             } catch (err) {
-                console.error('Lỗi khi lấy dữ liệu tổng quan:', err);
+                console.error('Lỗi khi lấy dữ liệu:', err);
             }
         };
 
         fetchOverview();
     }, []);
+
+
+
 
     const occupancyData = {
         labels: ['Đã lấp đầy', 'Còn trống'],
@@ -152,24 +171,25 @@ function StatsPage() {
                         <p>{stats.revenue.toLocaleString()} VND</p>
                     </div>
                 </div>
-
                 <div className="stat-card"><h3>Số dịch vụ sử dụng tháng này</h3><p>{stats.servicesUsedThisMonth}</p></div>
             </div>
 
-            <div className="charts-container">
-                <div className="chart">
+            <div className="svc-charts-row">
+                <div className="svc-chart-pie">
                     <h3>Tỷ lệ sử dụng phòng</h3>
                     <Pie data={occupancyData} />
                 </div>
-                <div className="chart">
+                <div className="svc-chart-bar-top">
                     <h3>Top 3 dịch vụ được sử dụng nhiều nhất</h3>
                     <Bar data={topServicesData} />
                 </div>
-                <div className="chart">
-                    <h3>Doanh thu trong năm</h3>
-                    <Bar data={monthlyRevenueData} />
-                </div>
             </div>
+
+            <div className="svc-chart-revenue">
+                <h3>Doanh thu trong năm</h3>
+                <Bar data={monthlyRevenueData} />
+            </div>
+
         </div>
     );
 }
