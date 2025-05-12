@@ -94,14 +94,9 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose }) {
 
         try {
             // Xoá toàn bộ cư dân
-            for (const resident of residentList) {
-                await axios.put(`/room/break/${resident.id}`, {});
-            }
-            await axios.put(`/room/edit/${room.id}`, { ...room, rentStatus: "available" });
-
+            await axios.put(`/room/remove/${room.id}`, {});
             setResidentList([]);
             alert("Xoá hợp đồng thành công");
-
             // onClose();
         } catch (err) {
             console.error("Lỗi khi xoá hợp đồng:", err);
@@ -114,15 +109,20 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose }) {
             setError("Vui lòng nhập đầy đủ thời gian thuê!");
             return;
         }
+        if (residentList.length === 0) {
+            setError("Hợp đồng phải có ít nhất 1 cư dân");
+            return;
+        }
         try {
             const payload = {
                 startTime,
                 endTime,
-                resident: {}
             };
-            await axios.put(`/rentaltime/update/${rentalTime.id}`, payload);
-            await axios.put(`/room/edit/${room.id}`, { ...room, rentStatus: "rented" });
+            await axios.put(`rentaltime/update/all/${room.id}`, payload);
 
+            if (room.rentStatus === "available") {
+                await axios.put(`/room/edit/${room.id}`, { ...room, rentStatus: "rented" });
+            }
             alert("Lưu hợp đồng thành công");
             setError("");
             onClose();

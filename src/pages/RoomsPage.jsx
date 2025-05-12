@@ -31,6 +31,10 @@ function RoomManagement({ role }) {
     };
 
     const handleEditRoom = (room) => {
+        if (role === "guest") {
+            alert("bạn cần đăng nhập để thực hiện hành vi này");
+            return;
+        }
         setEditingRoom(room);
         setShowRoomModal(true);
     };

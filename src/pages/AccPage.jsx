@@ -57,6 +57,7 @@ function AccountManagement() {
             await axios.put(`/user/update/${userInfo.id}`, userInfo);
             setMessage('Cập nhật thông tin thành công!');
             setIsEditing(false);
+            window.location.reload();
         } catch (error) {
             console.error('Cập nhật lỗi:', error);
             setMessage('Không thể cập nhật thông tin.');
@@ -107,8 +108,8 @@ function AccountManagement() {
                     <div className="form-group">
                         <label>Ngày sinh:</label>
                         <input
-                            type="text"
-                            name="address"
+                            type="date"
+                            name="dateOfBirth"
                             value={userInfo.dateOfBirth}
                             onChange={handleUserInfoChange}
                             disabled={!isEditing}
