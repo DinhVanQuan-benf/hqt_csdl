@@ -81,7 +81,7 @@ function RoomManagement({ role }) {
                                 >
                                     {room.rentStatus === 'available'
                                         ? 'Thêm hợp đồng'
-                                        : `${latest?.startDate || ''} -> ${latest?.endDate || ''}`}
+                                        : `${latest?.startTime || ''} -> ${latest?.endTime || ''}`}
                                 </span>
                             </p>
                             <div className="actions">

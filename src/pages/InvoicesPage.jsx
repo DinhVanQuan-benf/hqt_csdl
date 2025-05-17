@@ -15,21 +15,10 @@ function InvoicePage() {
     useEffect(() => {
         const fetchInvoices = async () => {
             try {
-                const response = await axios.get('/resident/all');
-                const residents = response.data;
-                const flatServices = [];
+                const response = await axios.get('/usedservice/all');
+                const services = response.data;
 
-                residents.forEach(resident => {
-                    resident.usedServices?.forEach(service => {
-                        flatServices.push({
-                            ...service,
-                            residentName: resident.name,
-                            residentId: resident.id
-                        });
-                    });
-                });
-
-                setInvoices(flatServices);
+                setInvoices(services);
             } catch (error) {
                 console.error('Error fetching invoices:', error);
             }

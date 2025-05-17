@@ -3,8 +3,8 @@ import axios from "../utils/axiosConfig";
 import "../styles/contract.css";
 
 function ContractModal({ room, rentalTime = {}, residents = [], onClose }) {
-    const [startTime, setStartTime] = useState(rentalTime.startDate || "");
-    const [endTime, setEndTime] = useState(rentalTime.endDate || "");
+    const [startTime, setStartTime] = useState(rentalTime.startTime || "");
+    const [endTime, setEndTime] = useState(rentalTime.endTime || "");
     const [residentList, setResidentList] = useState(residents);
     const [showResidentForm, setShowResidentForm] = useState(false);
     const [editingResidentIndex, setEditingResidentIndex] = useState(null);
@@ -18,8 +18,8 @@ function ContractModal({ room, rentalTime = {}, residents = [], onClose }) {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        setStartTime(rentalTime.startDate || "");
-        setEndTime(rentalTime.endDate || "");
+        setStartTime(rentalTime.startTime || "");
+        setEndTime(rentalTime.endTime || "");
         setResidentList(residents);
     }, [rentalTime]); // Không cần dùng residents ở đây nữa nếu tự quản lý danh sách nội bộ
 
